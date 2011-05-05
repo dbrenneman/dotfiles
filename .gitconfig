@@ -1,3 +1,7 @@
+[user]
+  name = David Brenneman
+  email = db@davidbrenneman.com
+
 [alias]
   st = status
   ci = commit
