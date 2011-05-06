@@ -104,6 +104,16 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+
+# other aliases
 alias resume='screen -aADR emacs emacs'
+alias e='/usr/bin/emacsclient -n'
+alias ew='/usr/bin/emacsclient'
+
+# post login tasks
 keychain id_dsa
 eval "source ~/.keychain/$HOSTNAME-sh > /dev/null"
+# if we are not already in a screen session, start one
+if [[ `echo $STY` == "" ]]; then
+    screen -aADR emacs emacs
+fi
