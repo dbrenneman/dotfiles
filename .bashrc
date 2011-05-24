@@ -106,7 +106,7 @@ fi
 
 
 # other aliases
-alias resume='screen -aADR emacs emacs'
+alias resume='screen -aADRS emacs /usr/bin/emacs'
 alias e='/usr/bin/emacsclient -n'
 alias ew='/usr/bin/emacsclient'
 
@@ -115,5 +115,5 @@ keychain id_dsa
 eval "source ~/.keychain/$HOSTNAME-sh > /dev/null"
 # if we are not already in a screen session, start one
 if [[ `echo $STY` == "" ]]; then
-    screen -aADR emacs emacs
+    resume
 fi
