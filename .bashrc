@@ -114,6 +114,6 @@ alias ew='/usr/bin/emacsclient'
 keychain id_dsa
 eval "source ~/.keychain/$HOSTNAME-sh > /dev/null"
 # if we are not already in a screen session, start one
-if [[ `echo $STY` == "" ]]; then
-    resume
-fi
+# if [[ `echo $STY` == "" ]]; then
+#     resume
+# fi
