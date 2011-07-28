@@ -105,15 +105,25 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 
+export EDITOR='emacsclient'
+export VISUAL=$EDITOR
+export ALTERNATE_EDITOR=""
+
+
 # other aliases
-alias resume='screen -aADRS emacs /usr/bin/emacs'
+alias resume='tmux attach'
 alias e='/usr/bin/emacsclient -n'
 alias ew='/usr/bin/emacsclient'
 
 # post login tasks
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 keychain id_dsa
 eval "source ~/.keychain/$HOSTNAME-sh > /dev/null"
-# if we are not already in a screen session, start one
-# if [[ `echo $STY` == "" ]]; then
-#     resume
-# fi
+# TMUX
+if which tmux 2>&1 >/dev/null; then
+  # if no session is started, start a new session
+  if test -z ${TMUX}; then
+    tmux attach
+  fi
+fi
