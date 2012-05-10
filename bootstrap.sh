@@ -22,4 +22,4 @@ else
 	fi
 fi
 unset doIt
-source ~/.bash_profile#!/bin/bash
+source ~/.bash_profile
