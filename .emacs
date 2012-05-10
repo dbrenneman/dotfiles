@@ -1,8 +1,5 @@
 ;; .emacs
 ;; =========================================================================
-(add-to-list 'load-path "~/.emacs.d")
-(add-to-list 'load-path "~/.emacs.d/plugins")
-
 (server-start)
 
 ;; Use UTF-8 encoding
