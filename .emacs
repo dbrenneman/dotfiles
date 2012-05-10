@@ -78,15 +78,6 @@
 
 (require 'magit)
 
-;; Shells in emacs
-(require 'multi-term)
-(setq multi-term-program "/bin/bash")
-(setq multi-term-scroll-to-bottom-on-input 1)
-(setq multi-term-scroll-to-bottom-on-output 1)
-(setq multi-term-scroll-show-maximum-output 1)
-;; multi-term keybinding
-(global-set-key [f5] 'multi-term)
-
 ;; Functions for configuring window geometry, placement and navigation
 
 ;; move around between windows easier
