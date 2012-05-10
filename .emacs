@@ -116,8 +116,8 @@
 ;; Appearance configuration
 ;;==========================
 ;; Make it pretty
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes" t)
-(load-theme 'solarized-[light|dark] t)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
+(load-theme 'solarized-dark t)
 
 
 ;; Disable menu bar, etc...
