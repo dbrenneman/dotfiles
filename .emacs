@@ -76,10 +76,6 @@
 ;;TRAMP should default to ssh
 (setq tramp-default-method "ssh")
 
-;; turn on tempbuf mode for dired buffers
-(require 'tempbuf)
-(add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
-
 (require 'magit)
 
 ;; Shells in emacs
