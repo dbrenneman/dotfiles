@@ -164,11 +164,6 @@
 ; highlight incremental search
 (setq search-highlight t)
 
-(partial-completion-mode t)
-
-;; Use lazy lock for syntax coloring, otherwise large files will not
-;; be colored. Also allows large files to load faster. Thanks Andrew
-;; Innes
 (cond ((fboundp 'global-font-lock-mode)
        ;; Turn on font-lock in all modes that support it
        (global-font-lock-mode t)
