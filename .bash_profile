@@ -47,6 +47,12 @@ shopt -s cdspell
 export LC_ALL="en_US.UTF-8"
 export LANG="en_US"
 
+# PATH manipulations
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
 # Editor
 export EDITOR='emacsclient'
 export VISUAL=$EDITOR
