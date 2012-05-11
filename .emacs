@@ -100,6 +100,10 @@
 
 
 ;; Keybindings
+;;
+(global-set-key "\C-c1" 'find-grep-dired)
+(global-set-key "\C-c2" 'magit-status)
+
 (define-key global-map "\M-g" 'goto-line)
 (define-key global-map "\M-%"  'query-replace-regexp)
 (define-key global-map "\M- " 'hippie-expand)
