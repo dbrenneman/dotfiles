@@ -109,7 +109,7 @@ export BOLD
 export RESET
 
 function parse_git_dirty() {
-	[[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "\[$RESET\]\[$MAGENTA\]Δ\[$RESET\]"
+	[[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "$RESET$MAGENTAΔ$RESET"
 }
 
 function parse_git_branch() {
