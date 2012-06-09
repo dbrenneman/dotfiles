@@ -76,6 +76,10 @@
 ;;TRAMP should default to ssh
 (setq tramp-default-method "ssh")
 
+
+;; Magit
+(add-to-list 'load-path
+             "~/.emacs.d/plugins/magit")
 (require 'magit)
 
 ;; Functions for configuring window geometry, placement and navigation

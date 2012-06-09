@@ -7,6 +7,10 @@ function doIt() {
     git clone https://github.com/capitaomorte/yasnippet
     cd ~/.emacs.d/plugins/yasnippet
     git pull
+    cd ~/.emacs.d/plugins
+    git clone https://github.com/magit/magit
+    cd ~/.emacs.d/plugins/magit
+    git pull
     cd ~/.emacs.d/themes
     git clone https://github.com/sellout/emacs-color-theme-solarized
     cd ~/.emacs.d/themes/emacs-color-theme-solarized
