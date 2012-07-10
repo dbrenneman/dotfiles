@@ -1,6 +1,5 @@
 ;; .emacs
 ;; =========================================================================
-(server-start)
 
 ;; Use UTF-8 encoding
 (setq locale-coding-system 'utf-8)
@@ -124,8 +123,10 @@
 ;; Appearance configuration
 ;;==========================
 ;; Make it pretty
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
-(load-theme 'solarized-dark t)
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
+;; (load-theme 'solarized-dark t)
+(load-theme 'zenburn t)
 
 
 ;; Disable menu bar, etc...

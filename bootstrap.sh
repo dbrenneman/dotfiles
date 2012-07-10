@@ -15,6 +15,10 @@ function doIt() {
     git clone https://github.com/sellout/emacs-color-theme-solarized
     cd ~/.emacs.d/themes/emacs-color-theme-solarized
     git pull
+    cd ~/.emacs.d/themes
+    git clone https://github.com/bbatsov/zenburn-emacs.git
+    cd ~/.emacs.d/themes/zenburn-emacs
+    git pull
 }
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
 	doIt
