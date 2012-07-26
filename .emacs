@@ -392,7 +392,6 @@ it)"
  '(comint-get-old-input (lambda () "")) ; what to run when i press enter on a
                                         ; line above the current prompt
  '(comint-input-ring-size 5000)         ; max shell history size
- '(protect-buffer-bury-p nil)
 )
 
 (setenv "PAGER" "cat")
@@ -423,10 +422,6 @@ it)"
   "Add to shell-mode-hook to prevent jump-scrolling on newlines in shell buffers."
   (set (make-local-variable 'scroll-conservatively) 10))
 (add-hook 'shell-mode-hook 'set-scroll-conservatively)
-
-;; make it harder to kill my shell buffers
-(require 'protbuf)
-(add-hook 'shell-mode-hook 'protect-process-buffer-from-kill-mode)
 
 (defun make-comint-directory-tracking-work-remotely ()
   "Add this to comint-mode-hook to make directory tracking work
