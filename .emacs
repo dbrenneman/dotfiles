@@ -123,10 +123,10 @@
 ;; Appearance configuration
 ;;==========================
 ;; Make it pretty
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
 ;; (load-theme 'solarized-dark t)
-(load-theme 'zenburn t)
+;; (load-theme 'zenburn t)
 
 
 ;; Disable menu bar, etc...
@@ -385,6 +385,7 @@ it)"
 (defvar my-shells (append my-local-shells))
 
 (require 'tramp)
+(require 'multi-term)
 
 (custom-set-variables
  '(tramp-default-method "ssh")          ; uses ControlMaster

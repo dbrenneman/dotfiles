@@ -19,6 +19,8 @@ function doIt() {
     git clone https://github.com/bbatsov/zenburn-emacs.git
     cd ~/.emacs.d/themes/zenburn-emacs
     git pull
+    cd ~/.emacs.d/plugins
+    curl -O http://www.emacswiki.org/emacs/download/multi-term.el
 }
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
 	doIt
