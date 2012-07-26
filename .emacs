@@ -1,5 +1,7 @@
 ;; .emacs
 ;; =========================================================================
+(add-to-list 'load-path
+             "~/.emacs.d/plugins/")
 
 ;; Use UTF-8 encoding
 (setq locale-coding-system 'utf-8)
@@ -118,16 +120,6 @@
 (global-set-key (kbd "S-<right>") 'windmove-right)        ; move to right window
 (global-set-key (kbd "S-<up>") 'windmove-up)              ; move to upper window
 (global-set-key (kbd "S-<down>") 'windmove-down)          ; move to downer window
-
-;;
-;; Appearance configuration
-;;==========================
-;; Make it pretty
-;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
-;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
-;; (load-theme 'solarized-dark t)
-;; (load-theme 'zenburn t)
-
 
 ;; Disable menu bar, etc...
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -477,3 +469,14 @@ the line, to capture multiline input. (This only has effect if
 
 ;; for other code, e.g. emacsclient in TRAMP ssh shells and automatically
 ;; closing completions buffers, see the links above.
+
+;;
+;; Appearance configuration
+;;==========================
+;; Make it pretty
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
+;; (load-theme 'solarized-dark t)
+;; (load-theme 'zenburn t)
+
+
