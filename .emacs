@@ -457,10 +457,6 @@ the line, to capture multiline input. (This only has effect if
   (flet ((end-of-line () (end-of-buffer)))
     ad-do-it))
 
-;; not sure why, but comint needs to be reloaded from the source (*not*
-;; compiled) elisp to make the above advise stick.
-(load "comint.el.gz")
-
 ;; for other code, e.g. emacsclient in TRAMP ssh shells and automatically
 ;; closing completions buffers, see the links above.
 
