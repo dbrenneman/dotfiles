@@ -254,6 +254,7 @@
 
 ;; js2-mode for JavaScript development
 (load "~/.emacs.d/plugins/js2-20090723b.el")
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; Python programming features
 
