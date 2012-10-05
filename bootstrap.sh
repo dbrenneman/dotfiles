@@ -4,6 +4,10 @@ git pull
 function doIt() {
 	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" --exclude "README.md" -av . ~
     cd ~/.emacs.d/plugins
+    git clone https://github.com/fgallina/python.el.git python
+    cd ~/.emacs.d/plugins/python
+    git pull
+    cd ~/.emacs.d/plugins
     git clone https://github.com/capitaomorte/yasnippet
     cd ~/.emacs.d/plugins/yasnippet
     git pull

@@ -253,11 +253,11 @@
 ;; Python programming features
 
 ;; Python Mode Setup
-(require 'python-mode)
-(autoload 'python-mode "python-mode" "Python mode." t)
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-(add-to-list 'auto-mode-alist '("\\.cpy$" . python-mode))
-(add-to-list 'auto-mode-alist '("\\.vpy$" . python-mode))
+(add-to-list 'load-path "~.emacs.d/plugins/python")
+(require 'python)
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python))
+(add-to-list 'auto-mode-alist '("\\.cpy$" . python))
+(add-to-list 'auto-mode-alist '("\\.vpy$" . python))
 (add-hook 'python-mode-hook
           (lambda ()
             (set (make-variable-buffer-local 'beginning-of-defun-function)
