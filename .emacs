@@ -265,8 +265,6 @@
             (setq outline-regexp "def\\|class ")
             (define-key py-mode-map "\C-c#" 'comment-region)
             (eldoc-mode 1)
-            (set-variable 'py-indent-offset 4)
-            (set-variable 'py-smart-indentation nil)
             (set-variable 'indent-tabs-mode nil)
             (define-key py-mode-map "\C-m" 'newline-and-indent)
             (electric-pair-mode)
@@ -294,14 +292,6 @@
 (add-hook 'python-mode-hook
           (lambda ()
             (python-auto-fill-comments-only)))
-
-;; ;; Set up Pymacs
-;; (autoload 'pymacs-load "pymacs" nil t)
-;; (autoload 'pymacs-eval "pymacs" nil t)
-;; (autoload 'pymacs-apply "pymacs")
-;; (autoload 'pymacs-call "pymacs")
-;; (require 'pymacs)
-
 
 ;; Python Auto Syntax Error Highlight
 ;; courtesy of Chris McDonough
