@@ -249,8 +249,11 @@
 (require 'yasnippet)
 (yas/global-mode 1)
 
-
+;; nXhtml for web development
 (load "~/.emacs.d/plugins/nxhtml/autostart.el")
+
+;; js2-mode for JavaScript development
+(load "~/.emacs.d/plugins/js2-20090723b.el")
 
 ;; Python programming features
 

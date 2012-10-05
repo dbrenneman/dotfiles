@@ -9,6 +9,9 @@ function doIt() {
     wget http://ourcomments.org/Emacs/DL/elisp/nxhtml/zip/nxhtml-2.08-100425.zip
     unzip nxhtml-2.08-100425.zip
     rm nxhtml-2.08-100425.zip
+    # js2 mode for JavaScript development
+    cd ~/.emacs.d/plugins
+    wget http://code.google.com/p/js2-mode/downloads/detail?name=js2-20090723b.el&can=2&q=
     # python mode
     cd ~/.emacs.d/plugins
     git clone https://github.com/fgallina/python.el.git python
