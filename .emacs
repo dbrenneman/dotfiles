@@ -255,9 +255,9 @@
 ;; Python Mode Setup
 (add-to-list 'load-path "~.emacs.d/plugins/python")
 (require 'python)
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python))
-(add-to-list 'auto-mode-alist '("\\.cpy$" . python))
-(add-to-list 'auto-mode-alist '("\\.vpy$" . python))
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+(add-to-list 'auto-mode-alist '("\\.cpy$" . python-mode))
+(add-to-list 'auto-mode-alist '("\\.vpy$" . python-mode))
 (add-hook 'python-mode-hook
           (lambda ()
             (set (make-variable-buffer-local 'beginning-of-defun-function)
@@ -273,12 +273,17 @@
             (linum-mode)
             ))
 
-;;python mode: go to the next code block
-(defun py-next-block ()
-   "go to the next block.  Cf. `forward-sexp' for lisp-mode"
-   (interactive)
-   (py-mark-block nil 't)
-   (back-to-indentation))
+(setq
+ python-shell-interpreter "ipython"
+ python-shell-interpreter-args ""
+ python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+ python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+ python-shell-completion-setup-code
+   "from IPython.core.completerlib import module_completion"
+ python-shell-completion-module-string-code
+   "';'.join(module_completion('''%s'''))\n"
+ python-shell-completion-string-code
+   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
 ;; Autofill inside of comments
 (defun python-auto-fill-comments-only ()
@@ -290,23 +295,12 @@
           (lambda ()
             (python-auto-fill-comments-only)))
 
-;; Let python-mode know about xpdb and generator expressions.
-(setq py-pdbtrack-input-prompt "\n[(<]*x?pdb[>)]+ "
-      py-pdbtrack-stack-entry-regexp
-      (concat "^> \\(.*\\)(\\([0-9]+\\))"
-	      "\\([?a-zA-Z0-9_]+\\|<genexpr>\\)()"))
-
-
 ;; Set up Pymacs
 (autoload 'pymacs-load "pymacs" nil t)
 (autoload 'pymacs-eval "pymacs" nil t)
 (autoload 'pymacs-apply "pymacs")
 (autoload 'pymacs-call "pymacs")
 (require 'pymacs)
-
-
-;; set up pycomplete
-(require 'pycomplete)
 
 
 ;; Python Auto Syntax Error Highlight
