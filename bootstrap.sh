@@ -23,6 +23,13 @@ function doIt() {
     git clone https://github.com/bbatsov/zenburn-emacs.git
     cd ~/.emacs.d/themes/zenburn-emacs
     git pull
+    # nXhtml mode for web development
+    cd ~/.emacs.d/plugins
+    rm -rf ./nxhtml
+    wget http://ourcomments.org/Emacs/DL/elisp/nxhtml/zip/nxhtml-2.08-100425.zip
+    unzip nxhtml-2.08-100425.zip
+    rm nxhtml-2.08-100425.zip
+    mv nxhtml-2.08-100425 nxhtml
 }
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
 	doIt
