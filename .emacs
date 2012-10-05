@@ -250,7 +250,7 @@
 (yas/global-mode 1)
 
 
-(load ".emacs.d/plugins//nxhtml/autostart.el")
+(load ".emacs.d/plugins/nxhtml/autostart.el")
 
 ;; Python programming features
 
