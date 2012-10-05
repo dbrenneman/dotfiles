@@ -295,12 +295,12 @@
           (lambda ()
             (python-auto-fill-comments-only)))
 
-;; Set up Pymacs
-(autoload 'pymacs-load "pymacs" nil t)
-(autoload 'pymacs-eval "pymacs" nil t)
-(autoload 'pymacs-apply "pymacs")
-(autoload 'pymacs-call "pymacs")
-(require 'pymacs)
+;; ;; Set up Pymacs
+;; (autoload 'pymacs-load "pymacs" nil t)
+;; (autoload 'pymacs-eval "pymacs" nil t)
+;; (autoload 'pymacs-apply "pymacs")
+;; (autoload 'pymacs-call "pymacs")
+;; (require 'pymacs)
 
 
 ;; Python Auto Syntax Error Highlight
