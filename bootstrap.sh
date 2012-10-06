@@ -13,6 +13,12 @@ function doIt() {
     cd ~/.emacs.d/plugins
     rm js2-20090723b.el
     wget http://js2-mode.googlecode.com/files/js2-20090723b.el
+    # lintnode for flymake js linting
+    cd ~/.emacs.d/plugins
+    git clone https://github.com/davidmiller/lintnode.git
+    cd ~/.emacs.d/plugins/lintnode
+    git pull
+    npm install express connect-form haml underscore
     # flymake cursor error mode
     cd ~/.emacs.d/plugins
     rm flymake-cursor.el
