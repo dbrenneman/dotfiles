@@ -11,6 +11,7 @@ function doIt() {
     rm nxhtml-2.08-100425.zip
     # js2 mode for JavaScript development
     cd ~/.emacs.d/plugins
+    rm js2-20090723b.el
     wget http://js2-mode.googlecode.com/files/js2-20090723b.el
     # python mode
     cd ~/.emacs.d/plugins
