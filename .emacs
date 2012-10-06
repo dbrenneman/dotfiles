@@ -290,7 +290,7 @@
    "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
 ;; pymacs
-;;(load "~/.emacs.d/plugins/Pymacs/pymacs.el")
+(require 'pymacs)
 (autoload ’pymacs-apply "pymacs")
 (autoload ’pymacs-call "pymacs")
 (autoload ’pymacs-eval "pymacs" nil t)
@@ -301,7 +301,6 @@
 
 
 ;; ropemacs
-(require 'pymacs)
 (pymacs-load "ropemacs" "rope-")
 (setq ropemacs-enable-shortcuts nil)
 (setq ropemacs-local-prefix "C-c C-p")
