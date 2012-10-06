@@ -23,7 +23,7 @@ function doIt() {
     cd ~/.emacs.d/plugins/Pymacs
     git pull
     make install
-    emacs -batch -eval ’(byte-compile-file "~/.emacs.d/plugins/Pymacs/pymacs.el")’
+    emacs -batch -eval '(byte-compile-file "~/.emacs.d/plugins/Pymacs/pymacs.el")'
     # rope
     rm -rf ./rope
     hg clone https://bitbucket.org/agr/rope
