@@ -19,6 +19,10 @@ function doIt() {
     cd ~/.emacs.d/plugins/lintnode
     git pull
     npm install express connect-form haml underscore
+    # js-comint JavaScript REPL
+    cd ~/.emacs.d/plugins
+    rm js-comint.el
+    wget http://voxel.dl.sourceforge.net/project/js-comint-el/js-comint-el/0.0.1/js-comint.el
     # flymake cursor error mode
     cd ~/.emacs.d/plugins
     rm flymake-cursor.el
