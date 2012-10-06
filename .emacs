@@ -299,10 +299,6 @@
 (autoload 'pymacs-autoload "pymacs")
 
 
-
-;; ropemacs
-(pymacs-load "ropemacs" "rope-")
-
 ;; Autofill inside of comments
 (defun python-auto-fill-comments-only ()
   (auto-fill-mode 1)
