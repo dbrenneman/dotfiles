@@ -17,6 +17,13 @@ function doIt() {
     git clone https://github.com/fgallina/python.el.git python
     cd ~/.emacs.d/plugins/python
     git pull
+    # pymacs
+    cd ~/.emacs.d/plugins
+    git clone https://github.com/pinard/Pymacs.git
+    cd ~/.emacs.d/plugins/Pymacs
+    git pull
+    make install
+    emacs -batch -eval ’(byte-compile-file "~/.emacs.d/plugins/Pymacs/pymacs.el")’
     # yasnippet
     cd ~/.emacs.d/plugins
     git clone https://github.com/capitaomorte/yasnippet

@@ -257,7 +257,6 @@
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; Python programming features
-
 ;; Python Mode Setup
 (add-to-list 'load-path "~.emacs.d/plugins/python")
 (require 'python)
@@ -277,6 +276,7 @@
             (linum-mode)
             ))
 
+;; ipython shell
 (setq
  python-shell-interpreter "ipython"
  python-shell-interpreter-args ""
@@ -288,6 +288,15 @@
    "';'.join(module_completion('''%s'''))\n"
  python-shell-completion-string-code
    "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+
+;; pymacs
+(load "~/.emacs.d/plugins/Pymacs/pymacs.elc")
+(autoload ’pymacs-apply "pymacs")
+(autoload ’pymacs-call "pymacs")
+(autoload ’pymacs-eval "pymacs" nil t)
+(autoload ’pymacs-exec "pymacs" nil t)
+(autoload ’pymacs-load "pymacs" nil t)
+(autoload ’pymacs-autoload "pymacs")
 
 ;; Autofill inside of comments
 (defun python-auto-fill-comments-only ()
