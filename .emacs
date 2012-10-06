@@ -290,7 +290,7 @@
    "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
 ;; pymacs
-(load "~/.emacs.d/plugins/Pymacs/pymacs.elc")
+;;(load "~/.emacs.d/plugins/Pymacs/pymacs.el")
 (autoload ’pymacs-apply "pymacs")
 (autoload ’pymacs-call "pymacs")
 (autoload ’pymacs-eval "pymacs" nil t)
