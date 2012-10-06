@@ -298,6 +298,14 @@
 (autoload ’pymacs-load "pymacs" nil t)
 (autoload ’pymacs-autoload "pymacs")
 
+
+
+;; ropemacs
+(require 'pymacs)
+(pymacs-load "ropemacs" "rope-")
+(setq ropemacs-enable-shortcuts nil)
+(setq ropemacs-local-prefix "C-c C-p")
+
 ;; Autofill inside of comments
 (defun python-auto-fill-comments-only ()
   (auto-fill-mode 1)
