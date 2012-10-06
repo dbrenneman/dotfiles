@@ -254,6 +254,18 @@
 (load "~/.emacs.d/plugins/js2-20090723b.el")
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
+;; lintnode for syntax checking JavaScript
+(add-to-list 'load-path "~/.emacs.d/plugins/lintnode")
+(require 'flymake-jslint)
+;; Make sure we can find the lintnode executable
+(setq lintnode-location "~/.emacs.d/plugins/lintnode")
+;; JSLint can be... opinionated
+(setq lintnode-jslint-excludes (list 'nomen 'undef 'plusplus 'onevar 'white))
+;; Start the server when we first open a js file and start checking
+(add-hook 'js-mode-hook
+          (lambda ()
+            (lintnode-hook)))
+
 ;; Python programming features
 ;; Python Mode Setup
 (add-to-list 'load-path "~.emacs.d/plugins/python")
