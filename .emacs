@@ -301,9 +301,9 @@
 
 
 ;; ropemacs
-(pymacs-load "ropemacs" "rope-")
-(setq ropemacs-enable-shortcuts nil)
-(setq ropemacs-local-prefix "C-c C-p")
+;;(pymacs-load "ropemacs" "rope-")
+;;(setq ropemacs-enable-shortcuts nil)
+;;;;(setq ropemacs-local-prefix "C-c C-p")
 
 ;; Autofill inside of comments
 (defun python-auto-fill-comments-only ()
