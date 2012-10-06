@@ -17,32 +17,6 @@ function doIt() {
     git clone https://github.com/fgallina/python.el.git python
     cd ~/.emacs.d/plugins/python
     git pull
-    # pymacs
-    cd ~/.emacs.d/plugins
-    git clone https://github.com/pinard/Pymacs.git
-    cd ~/.emacs.d/plugins/Pymacs
-    git pull
-    make install
-    emacs -batch -eval '(byte-compile-file "~/.emacs.d/plugins/Pymacs/pymacs.el")'
-    # rope
-    rm -rf ./rope
-    hg clone https://bitbucket.org/agr/rope
-    cd rope
-    hg pull
-    python setup.py install
-    # ropemacs
-    rm -rf ./ropemacs
-    hg clone https://bitbucket.org/agr/ropemacs
-    cd ropemacs
-    hg pull
-    python setup.py install
-    # ropemode
-    rm -rf ./ropemode
-    wget http://pypi.python.org/packages/source/r/ropemode/ropemode-0.2.tar.gz
-    gunzip ropemode-0.2.tar.gz
-    rm ropemode-0.2.tar.gz
-    cd ropemode
-    python setup.py install
     # yasnippet
     cd ~/.emacs.d/plugins
     git clone https://github.com/capitaomorte/yasnippet
