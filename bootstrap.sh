@@ -13,6 +13,10 @@ function doIt() {
     cd ~/.emacs.d/plugins
     rm js2-20090723b.el
     wget http://js2-mode.googlecode.com/files/js2-20090723b.el
+    # flymake cursor error mode
+    cd ~/.emacs.d/plugins
+    rm flymake-cursor.el
+    wget http://www.emacswiki.org/emacs/download/flymake-cursor.el
     # python mode
     cd ~/.emacs.d/plugins
     git clone https://github.com/fgallina/python.el.git python
