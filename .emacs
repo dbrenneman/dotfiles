@@ -268,7 +268,6 @@
 
 ;; js-comint JavaScript REPL
 ;; M-x run-js or M-x send-region
-(add-to-list 'load-path "~/path/to/js-comint")
 (require 'js-comint)
 ;; Use node as our repl
 (setq inferior-js-program-command "node")
