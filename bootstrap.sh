@@ -5,8 +5,9 @@ function doIt() {
 	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" --exclude "README.md" -av . ~
     # nXhtml mode for web development
     cd ~/.emacs.d/plugins
-    rm -rf nxhtml
+    rm -rf nxhtml*
     wget http://ourcomments.org/Emacs/DL/elisp/nxhtml/zip/nxhtml-2.08-100425.zip
+    unzip nxhtml-2.08-100425.zip
     # js2 mode for JavaScript development
     cd ~/.emacs.d/plugins
     rm js2-20090723b.el
