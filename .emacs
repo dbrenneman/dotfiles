@@ -247,9 +247,6 @@
 (require 'yasnippet)
 (yas/global-mode 1)
 
-;; nXhtml for web development
-(load "~/.emacs.d/plugins/nxhtml/autostart.el")
-
 ;; js2-mode for JavaScript development
 (load "~/.emacs.d/plugins/js2-20090723b.el")
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
@@ -463,5 +460,3 @@ the line, to capture multiline input. (This only has effect if
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
 (load-theme 'solarized-dark t)
 ;; (load-theme 'zenburn t)
-
-
