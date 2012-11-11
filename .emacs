@@ -235,7 +235,7 @@
 ;; Remember and Org Modes
 (require 'org)
 (require 'remember)
-(require 'org-install)
+;(require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
@@ -348,15 +348,15 @@
 (add-hook 'python-mode-hook (lambda () (unless (eq buffer-file-name nil) (flymake-mode 1))))
 
 ;; enhancements for displaying flymake errors
-(require 'flymake-cursor)
+;; (require 'flymake-cursor)
 
-(defadvice flymake-goto-next-error (after display-message activate compile)
-  "Display the error in the mini-buffer rather than having to mouse over it"
-  (show-fly-err-at-point))
+;; (defadvice flymake-goto-next-error (after display-message activate compile)
+;;   "Display the error in the mini-buffer rather than having to mouse over it"
+;;   (show-fly-err-at-point))
 
-(defadvice flymake-goto-prev-error (after display-message activate compile)
-  "Display the error in the mini-buffer rather than having to mouse over it"
-  (show-fly-err-at-point))
+;; (defadvice flymake-goto-prev-error (after display-message activate compile)
+;;   "Display the error in the mini-buffer rather than having to mouse over it"
+;;   (show-fly-err-at-point))
 
 ;; Use archive mode to open Python eggs
 (add-to-list 'auto-mode-alist '("\\.egg\\'" . archive-mode))
