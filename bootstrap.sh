@@ -3,6 +3,10 @@ cd "$(dirname "$0")"
 git pull
 function doIt() {
 	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" --exclude "README.md" -av . ~
+    # Install zsh
+    cd
+    git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
+    chsh -s /bin/zsh
     # js2 mode for JavaScript development
     cd ~/.emacs.d/plugins
     rm js2-20090723b.el
