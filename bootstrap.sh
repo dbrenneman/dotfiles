@@ -35,6 +35,12 @@ function doIt() {
     git clone https://github.com/capitaomorte/yasnippet
     cd ~/.emacs.d/plugins/yasnippet
     git pull
+    # yasnippets
+    cd ~/.emacs.d/plugins
+    git clone https://github.com/AndreaCrotti/yasnippet-snippets.git
+    cd ~/.emacs.d/plugins/yasnippet-snippets
+    git pull
+    rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" --exclude "README.md" -av . ~/.emacs.d/plugins/yasnippet/snippets/
     # magit
     cd ~/.emacs.d/plugins
     git clone https://github.com/magit/magit
