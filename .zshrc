@@ -46,8 +46,4 @@ export LC_ALL="en_US.UTF-8"
 export LANG="en_US"
 
 # Path.
-export PATH==~/bin:/usr/local/bin:$PATH
-
-# Aliases.
-alias e=/usr/local/bin/emacs
-alias p=/usr/local/bin/python
+export PATH=/usr/local/bin:$PATH
