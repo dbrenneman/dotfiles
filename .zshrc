@@ -45,3 +45,6 @@ TZ='America/Los_Angeles'
 export LC_ALL="en_US.UTF-8"
 export LANG="en_US"
 
+# Aliases.
+alias emacs=/usr/local/bin/emacs
+alias python=/usr/local/bin/python
