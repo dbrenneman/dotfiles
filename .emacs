@@ -25,11 +25,6 @@
 (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
-;; display time and date in the modeline
-(setq display-time-day-and-date t
-      display-time-24hr-format t)
-(display-time)
-
 ;; Answer yes or no questions with y or n
 (fset 'yes-or-no-p 'y-or-n-p)
 
