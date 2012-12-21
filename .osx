@@ -1,3 +1,6 @@
+# Remove FileVault key from RAM when sleeping in order to prevent attacks
+sudo pmset -a destroyfvkeyonstandby 1 hibernatemode 25
+
 # Disable menu bar transparency
 defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool false
 
