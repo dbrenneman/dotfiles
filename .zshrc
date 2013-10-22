@@ -2,7 +2,7 @@ ZSH=$HOME/.oh-my-zsh
 
 ZSH_THEME="af-magic"
 
-plugins=(brew, django, git, github, heroku, node, npm, osx, supervisor, pip, python, virtualenvwrapper)
+plugins=(brew, command-not-found, django, git, github, gnu-utils, history-substring-search, node, npm, osx, pip, python)
 
 source $ZSH/oh-my-zsh.sh
 

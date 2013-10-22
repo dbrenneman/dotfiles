@@ -1,7 +1,5 @@
 ;; .emacs
 ;; =========================================================================
-(add-to-list 'load-path
-             "~/.emacs.d/plugins/")
 
 ;; Use UTF-8 encoding
 (setq locale-coding-system 'utf-8)
@@ -71,11 +69,6 @@
 (setq remote-shell-rpogram "ssh")
 ;;TRAMP should default to ssh
 (setq tramp-default-method "ssh")
-
-;; Magit
-(add-to-list 'load-path
-             "~/.emacs.d/plugins/magit")
-(require 'magit)
 
 ;; Functions for configuring window geometry, placement and navigation
 
@@ -236,33 +229,22 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-;; Yasnippet
-(add-to-list 'load-path
-             "~/.emacs.d/plugins/yasnippet")
-(require 'yasnippet)
-(yas/global-mode 1)
 
 ;; js2-mode for JavaScript development
-(load "~/.emacs.d/plugins/js2-20090723b.el")
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; lintnode for syntax checking JavaScript
-(add-to-list 'load-path "~/.emacs.d/plugins/lintnode")
-(require 'flymake-jslint)
-;; Make sure we can find the lintnode executable
-(setq lintnode-location "~/.emacs.d/plugins/lintnode")
 ;; JSLint can be... opinionated
-(setq lintnode-jslint-excludes (list 'nomen 'plusplus 'onevar 'white))
+;; (setq lintnode-jslint-excludes (list 'nomen 'plusplus 'onevar 'white))
 ;; Start the server when we first open a js file and start checking
-(add-hook 'js-mode-hook
-          (lambda ()
-            (lintnode-hook)))
+;;(add-hook 'js-mode-hook
+;;          (lambda ()
+;;            (lintnode-hook)))
 
 ;; js-comint JavaScript REPL
 ;; M-x run-js or M-x send-region
-(require 'js-comint)
+;;(require 'js-comint)
 ;; Use node as our repl
-(setq inferior-js-program-command "node")
+;;(setq inferior-js-program-command "node")
  
 (setq inferior-js-mode-hook
       (lambda ()
@@ -276,7 +258,7 @@
 
 ;; Python programming features
 ;; Python Mode Setup
-(add-to-list 'load-path "~.emacs.d/plugins/python")
+;;(add-to-list 'load-path "~.emacs.d/plugins/python")
 (require 'python)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.cpy$" . python-mode))
@@ -468,11 +450,16 @@ the line, to capture multiline input. (This only has effect if
 ;; for other code, e.g. emacsclient in TRAMP ssh shells and automatically
 ;; closing completions buffers, see the links above.
 
+;; ELPA Configuration
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+
 ;;
 ;; Appearance configuration
 ;;==========================
 ;; Make it pretty
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
-(load-theme 'solarized-dark t)
+;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
+;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
+;;(load-theme 'solarized-dark t)
 ;; (load-theme 'zenburn t)
