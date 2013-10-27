@@ -451,15 +451,11 @@ the line, to capture multiline input. (This only has effect if
 ;; closing completions buffers, see the links above.
 
 ;; ELPA Configuration
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (package-initialize)
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/") t)
+  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+  )
 
-;;
-;; Appearance configuration
-;;==========================
-;; Make it pretty
-;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized" t)
-;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/zenburn-emacs" t)
-;;(load-theme 'solarized-dark t)
-;; (load-theme 'zenburn t)
