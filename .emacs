@@ -447,15 +447,5 @@ the line, to capture multiline input. (This only has effect if
   (flet ((end-of-line () (end-of-buffer)))
     ad-do-it))
 
-;; for other code, e.g. emacsclient in TRAMP ssh shells and automatically
-;; closing completions buffers, see the links above.
-
-;; ELPA Configuration
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (package-initialize)
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/") t)
-  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-  )
-
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+(load-theme dark-laptop)
