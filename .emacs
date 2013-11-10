@@ -447,5 +447,7 @@ the line, to capture multiline input. (This only has effect if
   (flet ((end-of-line () (end-of-buffer)))
     ad-do-it))
 
+(require 'magit)
+
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (load-theme 'dark-laptop t)
