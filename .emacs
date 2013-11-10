@@ -448,4 +448,4 @@ the line, to capture multiline input. (This only has effect if
     ad-do-it))
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme dark-laptop)
+(load-theme 'dark-laptop t)
