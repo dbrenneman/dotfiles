@@ -8,13 +8,14 @@
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 (setq current-language-environment "UTF-8")
+(setenv "LC_CTYPE" "UTF-8")
 
 ;; force emacs to always use spaces instead of tab characters
 (setq-default indent-tabs-mode nil);
 
-;; set default tab width to 4 spaces
-(setq default-tab-width 4);
-(setq tab-width 4);
+;; set default tab width to 2 spaces
+(setq default-tab-width 2);
+(setq tab-width 2);
 
 ;; Unique Buffer Names - makes navigation of open buffers easier
 (require 'uniquify)
@@ -309,7 +310,7 @@
         (local-file (file-relative-name  
              temp-file  
              (file-name-directory buffer-file-name))))  
-       (list "~/.emacs.d/pycheckers" (list local-file))))  
+       (list "/Users/dbrenneman/.emacs.d/pycheckers" (list local-file))))  
    (add-to-list 'flymake-allowed-file-name-masks  
             '("\\.py\\'" flymake-pyflakes-init)))  
  (add-hook 'find-file-hook 'flymake-find-file-hook)
