@@ -134,32 +134,6 @@
 ;; Truncate lines, see http://www.emacswiki.org/cgi-bin/wiki/TruncateLines
 (setq truncate-partial-width-windows nil)
 
-;; ido configuration
-;;
-(require 'ido)
-(ido-mode t)
-(ido-everywhere t)
-(icomplete-mode 1)
-
-(setq ido-enable-flex-matching t)
-(setq ido-auto-merge-work-directories-length -1)
-(setq ido-default-buffer-method 'samewindow)
-(setq ido-show-dot-for-dired 1)
-(setq ido-confirm-unique-completion 0)
-(setq ido-ignore-extensions 1)
-
-(add-to-list 'ido-ignore-buffers "^ ")
-(add-to-list 'ido-ignore-buffers "*Messages*")
-(add-to-list 'ido-ignore-buffers "*Buffer*")
-(add-to-list 'ido-ignore-buffers "*Completions*")
-(add-to-list 'ido-ignore-buffers "*About*")
-
-(setq ibuffer-shrink-to-minimum-size t)
-(setq ibuffer-always-show-last-buffer nil)
-(setq ibuffer-sorting-mode 'recency)
-(setq ibuffer-use-header-line t)
-(global-set-key [(f12)] 'ibuffer)
-
 ;; Package setup
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq package-archives
@@ -299,6 +273,12 @@
 (setq-default ediff-highlight-all-diffs 'nil) ;; Only hilight current diff:
 (setq ediff-diff-options "-w")                ;; Turn off whitespace checking:
 (setq ediff-show-clashes-only t)              ;; Default to conflict diff.
+
+;;; Snippets ;;;
+;; (add-to-list 'load-path
+;;               "~/.emacs.d/plugins/yasnippet")
+(require 'yasnippet)
+(yas-global-mode 1)
 
 ;;; Flycheck config. ;;;
 (add-hook 'after-init-hook 'global-flycheck-mode)            ;; Enable flycheck everywhere.
