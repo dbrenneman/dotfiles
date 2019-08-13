@@ -1,147 +1,47 @@
 ;; .emacs
 ;; =========================================================================
 
-;; Setup "path"
-(defun set-exec-path-from-shell-PATH ()
-    "Set up Emacs' `exec-path' and PATH environment variable to match that used by the user's shell.
-This is particularly useful under Mac OSX, where GUI apps are not started from a shell."
-    (interactive)
-    (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-      (setenv "PATH" path-from-shell)
-          (setq exec-path (split-string path-from-shell path-separator))))
-(setenv "PATH" (concat "/Users/dbrenneman/Python/CPython-2.7.10/bin:" (getenv "PATH")))
-(add-to-list 'exec-path "/Users/dbrenneman/Python/CPython-2.7.10/bin")
-(setenv "PATH" (concat "/opt/twitter/bin:" (getenv "PATH")))
-(add-to-list 'exec-path "/opt/twitter/bin")
-
-;; use cat as the pager within emacs buffers
-(setenv "PAGER" "cat")
-
 ;; Disable menu bar, etc...
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(setq inhibit-startup-message t)
-(winner-mode 1)
 
-;;; enable mouse  ;;;
-(require 'mouse)
-(xterm-mouse-mode t)
-(defun track-mouse (e))
-(setq mouse-sel-mode t)
-(global-set-key [mouse-4] (lambda ()
- 			    (interactive)
- 			    (scroll-down 5)))
-(global-set-key [mouse-5] (lambda ()
- 			    (interactive)
- 			    (scroll-up 5)))
-;;; End of mouse setup ;;;
+;; Quiet Startup
+(setq inhibit-startup-screen t)
+(setq inhibit-startup-message t)
+(setq inhibit-startup-echo-area-message t)
+(setq initial-scratch-message nil)
+
+(defun display-startup-echo-area-message ()
+  (message ""))
+
+;; use cat as the pager within emacs buffers
+(setenv "PAGER" "cat")
 
 ;; Use UTF-8 encoding
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
+(prefer-coding-system 'utf-8-unix)
+(set-locale-environment "en_US.UTF-8")
+(set-default-coding-systems 'utf-8-unix)
+(set-selection-coding-system 'utf-8-unix)
+(set-buffer-file-coding-system 'utf-8-unix)
+(set-clipboard-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-(setq current-language-environment "UTF-8")
-(setenv "LC_CTYPE" "UTF-8")
+(set-terminal-coding-system 'utf-8)
+(setq buffer-file-coding-system 'utf-8)
+(setq save-buffer-coding-system 'utf-8-unix)
+(setq process-coding-system-alist
+  (cons '("grep" utf-8 . utf-8) process-coding-system-alist))
 
-;; force emacs to always use spaces instead of tab characters
-(setq-default indent-tabs-mode nil);
-
-;; set default tab width to 2 spaces
-(setq tab-width 2)
-(setq python-indent 2)
-(setq python-indent-offset 2)
 ;; Show trailing whitespaces
-
 (setq-default show-trailing-whitespace t)
 
-;; Package setup
-(add-to-list 'load-path "~/.emacs.d/plugins")
-(require 'package)
-(setq
- use-package-always-ensure t
- package-archives '(("org" . "http://orgmode.org/elpa/")
-                    ("melpa-stable" . "http://stable.melpa.org/packages/")))
+;; Always show line numbers
+(global-display-line-numbers-mode)
 
-(package-initialize)
-(when (not package-archive-contents)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
-
-;; run an emacs server
-(server-start)
-
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'zenburn t)
-
-
-;; Snippets!
-
-(add-to-list 'load-path
-             "~/.emacs.d/plugins/yasnippet")
-(require 'yasnippet)
-(yas-global-mode 1)
-
-;; set default font size
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:height 100 :family "Menlo")))))
-
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-
-;; Unique Buffer Names - makes navigation of open buffers easier
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'reverse)
-(setq uniquify-separator "/")
-(setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
-(setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
-
-;; Answer yes or no questions with y or n
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;;Place all backup copies of files in a common location
-(defconst use-backup-dir t)
-(setq backup-directory-alist (quote ((".*" . "~/.emacs-meta/backups/")))
-      version-control t                ; Use version numbers for backups
-      kept-new-versions 8             ; Number of newest versions to keep
-      kept-old-versions 2              ; Number of oldest versions to keep
-      delete-old-versions t            ; Ask to delete excess backup versions?
-      backup-by-copying-when-linked t) ; Copy linked files, don't rename.
-
-;; always revert buffers if their files change on disk to reflect new changes
-(global-auto-revert-mode 1)
-
-;; (eval-after-load "vc" '(remove-hook 'find-file-hooks 'vc-find-file-hook))
-(setq vc-handled-backends 'nil)
-
-;; Keybindings
-;;
-(global-set-key "\C-c1" 'find-grep-dired)
-(define-key global-map "\M-g" 'goto-line)
-(define-key global-map "\M-%"  'query-replace)
-(define-key global-map "\M- " 'hippie-expand)
-(define-key global-map "\M-j" 'join-line)
-
-;Make the prompt read only
-(setq comint-prompt-read-only t)
-
-;; no beep
-(setq ring-bell-function 'ignore)
-
-(line-number-mode 1)
-(column-number-mode 1)
 (setq-default fill-column 80)
 (setq auto-fill-mode 1)
-(setq scroll-step 1)
 
-; visual line mode
+;; visual line mode
 (global-visual-line-mode 1) ; 1 for on, 0 for off.
 
 ; highlight current line
@@ -170,6 +70,51 @@ This is particularly useful under Mac OSX, where GUI apps are not started from a
 ; highlight incremental search
 (setq search-highlight t)
 
+;; Send kill ring buffer text to macos and place macos clipboard on kill ring buffer.
+(defun copy-from-osx ()
+  (shell-command-to-string "pbpaste"))
+
+(defun paste-to-osx (text &optional push)
+  (let ((process-connection-type nil))
+    (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+      (process-send-string proc text)
+      (process-send-eof proc))))
+
+(setq interprogram-cut-function 'paste-to-osx)
+(setq interprogram-paste-function 'copy-from-osx)
+
+;; Answer yes or no questions with y or n
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; Unique Buffer Names - makes navigation of open buffers easier
+;; (require 'uniquify)
+;; (setq uniquify-buffer-name-style 'reverse)
+;; (setq uniquify-separator "/")
+;; (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
+;; (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
+
+;; always revert buffers if their files change on disk to reflect new changes
+(global-auto-revert-mode 1)
+
+;; (eval-after-load "vc" '(remove-hook 'find-file-hooks 'vc-find-file-hook))
+(setq vc-handled-backends 'nil)
+
+;; Keybindings
+;;
+(global-set-key "\C-c1" 'find-grep-dired)
+(define-key global-map "\M-g" 'goto-line)
+(define-key global-map "\M-%"  'query-replace)
+(define-key global-map "\M- " 'hippie-expand)
+(define-key global-map "\M-j" 'join-line)
+
+;Make the prompt read only
+(setq comint-prompt-read-only t)
+
+;; no beep
+(setq ring-bell-function 'ignore)
+
+(setq scroll-step 1)
+
 (cond ((fboundp 'global-font-lock-mode)
        ;; Turn on font-lock in all modes that support it
        (global-font-lock-mode t)
@@ -189,7 +134,6 @@ This is particularly useful under Mac OSX, where GUI apps are not started from a
 ;; Truncate lines, see http://www.emacswiki.org/cgi-bin/wiki/TruncateLines
 (setq truncate-partial-width-windows nil)
 
-;;
 ;; ido configuration
 ;;
 (require 'ido)
@@ -216,156 +160,305 @@ This is particularly useful under Mac OSX, where GUI apps are not started from a
 (setq ibuffer-use-header-line t)
 (global-set-key [(f12)] 'ibuffer)
 
+;; Package setup
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(setq package-archives
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+	("melpa-stb" . "https://stable.melpa.org/packages/")
+	("melpa" . "https://melpa.org/packages/"))
+      tls-checktrust t
+      tls-program '("gnutls-cli --x509cafile %t -p %p %h")
+      gnutls-verify-error t)
 
-;; Python Mode Setup
+(package-initialize)
+(require 'package)
 
-;; Python Auto Syntax Error Highlight
-(use-package flycheck
+(defvar package-list)
+(setq package-list
+      '(
+        ;;; General. ;;;
+        flycheck                ;; Linter.
+        yasnippet               ;; Snippet management.
+	yasnippet-snippets
+	fill-column-indicator
+	lsp-mode                ;; Language Server Protocol Support
+	lsp-ui
+        company                 ;; Auto completion.
+	company-lsp
+	company-quickhelp
+        multiple-cursors        ;; Multi cursor.
+        switch-buffer-functions ;; Add hook when switchin buffers.
+	git                     ;; Better vcs support for git.
+	git-gutter+             ;; Display / manage git changes.
+	magit                   ;; Git client.
+
+        ;; For golang.
+        go-mode                 ;; Go major mode.
+	flycheck-golangci-lint
+
+        ;;; Helm. ;;;
+        helm
+	helm-ag
+
+        ;;; Themes. ;;;
+        monokai-theme
+        solarized-theme
+        powerline
+
+        ;;; Various modes. ;;;
+        dockerfile-mode
+        markdown-mode
+	protobuf-mode
+	yaml-mode
+        json-mode
+
+	use-package
+))
+
+;; Fetch the list of packages available.
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; Install the missing packages.
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
+;; run an emacs server
+(use-package server
+  :ensure nil
+  :hook (after-init . server-mode))
+
+;; Set up key environment variables
+(use-package exec-path-from-shell
   :ensure t
-  :defer t
-  :preface (progn
-             (defun check-source-predicate ()
-               (and (executable-find "check.pex")
-                    (buffer-file-name)
-                    (string-match "workspace/source/.*\.py$" (buffer-file-name)))))
-  :init
-  (progn
-    (add-hook 'prog-mode-hook 'flycheck-mode)
-    (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+  :if (memq window-system '(mac ns x))
   :config
-  (progn
-    (flycheck-define-checker source-check
-      "A syntax checker for python source code in Source, using `check.pex'"
-      :command ("check.pex" source)
-      ;;; errors are reported like this:
-      ;;; <ID>:ERROR   <file name>:<line> <message>
-      :error-patterns ((error line-start (id (1+ nonl)) ":ERROR" (1+ nonl) ":" line (message) line-end)
-                       (warning line-start (id (1+ nonl)) ":WARNING" (1+ nonl) ":" line (message) line-end))
-      :predicate check-source-predicate
-      :modes (python-mode))
-    (add-to-list 'flycheck-checkers 'source-check)))
+  (setq exec-path-from-shell-variables '("PATH" "GOPATH"))
+  (exec-path-from-shell-initialize))
 
-;; Scala Setup
-(use-package ensime
-  :commands ensime ensime-mode)
-(add-hook 'scala-mode-hook 'ensime-mode)
+;;; Load & configure themes. ;;;
+;; Functions allow to easily switch between dark/light themes.
+(defun dark-theme()
+  (interactive)                    ;; Allow function call from M-x.
+  (disable-theme 'solarized-light) ;; Disable light theme.
+  (load-theme 'monokai t)          ;; Load Monokai.
+  (enable-theme 'monokai)          ;; Enable Monokai.
+  (powerline-default-theme)        ;; Powerline layout.
+  (custom-set-faces                ;; Tweak faces.
+   '(default ((t (:background "#101010"))))                                                          ;; Slightly increase contrast.
+   '(flycheck-error   ((t (:background "#FF6E64" :foreground "#990A1B" :underline t :weight bold)))) ;; Improve flycheck render.
+   '(flycheck-info    ((t (:background "#69B7F0" :foreground "#00629D" :underline t :weight bold)))) ;; Improve flycheck render.
+   '(flycheck-warning ((t (:background "#DEB542" :foreground "#7B6000" :underline t :weight bold)))) ;; Improve flycheck render.
+   )
+  )
+(defun light-theme()
+  (interactive)                    ;; Allow function call from M-x.
+  (disable-theme 'monokai)         ;; Disable dark theme.
+  (load-theme 'solarized-light t)  ;; Load Solarized.
+  (enable-theme 'solarized-light)  ;; Enable Solarized.
+  (powerline-default-theme)        ;; Powerline layout.
+  (custom-set-faces                ;; Reset default faces for solarized.
+   '(default ((t (:background "#FDF6E3"))))
+   '(flycheck-error   ((t (:background "#FF6E64" :foreground "#990A1B" :underline t :weight bold))))
+   '(flycheck-info    ((t (:background "#69B7F0" :foreground "#00629D" :underline t :weight bold))))
+   '(flycheck-warning ((t (:background "#DEB542" :foreground "#7B6000" :underline t :weight bold))))
+   )
+  )
+;; Default to dark theme.
+(dark-theme)
+
+;; Enable git gutter mode
+;;; Git gutter config. ;;;
+(global-git-gutter+-mode)
+
+(global-set-key (kbd "C-x C-g") 'global-git-gutter+-mode) ; Turn on/off globally.
+
+(eval-after-load 'git-gutter+
+  '(progn
+     ;;; Jump between hunks.
+     (define-key git-gutter+-mode-map (kbd "C-x n") 'git-gutter+-next-hunk)
+     (define-key git-gutter+-mode-map (kbd "C-x p") 'git-gutter+-previous-hunk)
+
+     ;;; Act on hunks.
+     (define-key git-gutter+-mode-map (kbd "C-x v =") 'git-gutter+-show-hunk)
+     (define-key git-gutter+-mode-map (kbd "C-x r")   'git-gutter+-revert-hunks)
+
+     ;; Stage hunk at point.
+     ;; If region is active, stage all hunk lines within the region.
+     (define-key git-gutter+-mode-map (kbd "C-x t")   'git-gutter+-stage-hunks)
+     (define-key git-gutter+-mode-map (kbd "C-x c")   'git-gutter+-commit)
+     (define-key git-gutter+-mode-map (kbd "C-x C")   'git-gutter+-stage-and-commit)
+     (define-key git-gutter+-mode-map (kbd "C-x C-y") 'git-gutter+-stage-and-commit-whole-buffer)
+     (define-key git-gutter+-mode-map (kbd "C-x U")   'git-gutter+-unstage-whole-buffer)))
+
+;;; Magit config. ;;;
+(global-set-key (kbd "C-x g") 'magit-status)
+
+;;; Ediff config. ;;;
+(setq-default ediff-highlight-all-diffs 'nil) ;; Only hilight current diff:
+(setq ediff-diff-options "-w")                ;; Turn off whitespace checking:
+(setq ediff-show-clashes-only t)              ;; Default to conflict diff.
+
+;;; Flycheck config. ;;;
+(add-hook 'after-init-hook 'global-flycheck-mode)            ;; Enable flycheck everywhere.
+(global-set-key (kbd "C-c <up>")   'flycheck-next-error)     ;; Ctrl-up   to go to next error.
+(global-set-key (kbd "C-c <down>") 'flycheck-previous-error) ;; Ctrl-down to go to previous error.
+(global-set-key (kbd "C-c l")      'flycheck-list-errors)    ;; Ctrl-l    to display error list.
+(setq flycheck-display-errors-delay 0)
+
+;;; Helm ;;;
+(use-package helm
+	     :init
+	     (setq helm-split-window-default-side 'other)
+	     (helm-mode 1)
+	     :config
+	     (define-key helm-find-files-map
+	       (kbd "<backtab>") #'helm-select-action)
+	     (define-key helm-find-files-map
+	       (kbd "C-i")  #'helm-execute-persistent-action)
+	     :bind
+	     (("M-x" . helm-M-x)
+	      ("M-y" . helm-show-kill-ring)
+	      ("C-x C-f" . helm-find-files)
+	      ("C-c o" . helm-occur)
+	      ("C-x b" . helm-mini)
+	      ("C-x r b" . helm-bookmarks)
+	      ("C-h a" . helm-apropos)
+	      ("C-h d" . helm-info-at-point)
+	      ("C-c L" . helm-locate)
+	      ("C-c r" . helm-resume)
+	      ("C-c i" . helm-imenu)))
+
+;;; Company ;;;
+(use-package company
+  :diminish company-mode
+  :defines
+  (company-dabbrev-ignore-case company-dabbrev-downcase)
+  :bind
+  (:map company-active-map
+   ("C-n" . company-select-next)
+   ("C-p" . company-select-previous)
+   ("<tab>" . company-complete-common-or-cycle)
+   :map company-search-map
+   ("C-p" . company-select-previous)
+   ("C-n" . company-select-next))
+  :custom
+  (company-idle-delay 0)
+  (company-echo-delay 0)
+  (company-minimum-prefix-length 1)
+  :hook
+  (after-init . global-company-mode)
+  (plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
+                            '((company-yasnippet
+                               )))))
+  ((go-mode
+    c++-mode
+    c-mode
+    objc-mode) . (lambda () (set (make-local-variable 'company-backends)
+                            '((company-yasnippet
+                               company-lsp
+                               company-files
+                               )))))
+  :config
+
+  ;; Show quick tooltip
+  (use-package company-quickhelp
+    :defines company-quickhelp-delay
+    :bind (:map company-active-map
+		("M-h" . company-quickhelp-manual-begin))
+    :hook (global-company-mode . company-quickhelp-mode)
+    :custom (company-quickhelp-delay 0.8)))
+
+;;; LSP ;;;
+(use-package lsp-mode
+  :commands (lsp)
+  :custom
+  ;; debug
+  (lsp-print-io nil)
+  (lsp-trace nil)
+  (lsp-print-performance nil)
+  ;; general
+  (lsp-auto-guess-root t)
+  (lsp-document-sync-method 'incremental) ;; none, full, incremental, or nil
+  (lsp-response-timeout 10)
+  (lsp-prefer-flymake t) ;; t(flymake), nil(lsp-ui), or :none
+  :hook
+  ((go-mode) . lsp)
+  :bind
+  (:map lsp-mode-map
+  ("C-c r"   . lsp-rename))
+  :config
+  (require 'lsp-clients)
+  ;; LSP UI tools
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    :custom
+    ;; lsp-ui-doc
+    (lsp-ui-doc-enable t)
+    (lsp-ui-doc-header t)
+    (lsp-ui-doc-include-signature nil)
+    (lsp-ui-doc-position 'at-point) ;; top, bottom, or at-point
+    (lsp-ui-doc-max-width 120)
+    (lsp-ui-doc-max-height 30)
+    (lsp-ui-doc-use-childframe t)
+    (lsp-ui-doc-use-webkit t)
+    ;; lsp-ui-flycheck
+    (lsp-ui-flycheck-enable t)
+    ;; lsp-ui-sideline
+    (lsp-ui-sideline-enable nil)
+    (lsp-ui-sideline-ignore-duplicate t)
+    (lsp-ui-sideline-show-symbol t)
+    (lsp-ui-sideline-show-hover t)
+    (lsp-ui-sideline-show-diagnostics t)
+    (lsp-ui-sideline-show-code-actions t)
+    (lsp-ui-sideline-code-actions-prefix "")
+    ;; lsp-ui-imenu
+    (lsp-ui-imenu-enable t)
+    (lsp-ui-imenu-kind-position 'top)
+    ;; lsp-ui-peek
+    (lsp-ui-peek-enable t)
+    (lsp-ui-peek-peek-height 20)
+    (lsp-ui-peek-list-width 50)
+    (lsp-ui-peek-fontify 'on-demand) ;; never, on-demand, or always
+    :preface
+    (defun ladicle/toggle-lsp-ui-doc ()
+      (interactive)
+      (if lsp-ui-doc-mode
+        (progn
+          (lsp-ui-doc-mode -1)
+          (lsp-ui-doc--hide-frame))
+         (lsp-ui-doc-mode 1)))
+    :bind
+    (:map lsp-mode-map
+    ("C-c C-r" . lsp-ui-peek-find-references)
+    ("C-c C-j" . lsp-ui-peek-find-definitions)
+    ("C-c i"   . lsp-ui-peek-find-implementation)
+    ("C-c m"   . lsp-ui-imenu)
+    ("C-c s"   . lsp-ui-sideline-mode)
+    ("C-c d"   . ladicle/toggle-lsp-ui-doc))
+    :hook
+    (lsp-mode . lsp-ui-mode))
+
+  ;; Lsp completion
+  (use-package company-lsp
+    :commands company-lsp
+    :custom
+    (company-lsp-cache-candidates t) ;; auto, t(always using a cache), or nil
+    (company-lsp-async t)
+    (company-lsp-enable-snippet t)
+    (company-lsp-enable-recompletion t)))
 
 ;;; Golang config ;;;
-;; Load go-mode
-(setq gofmt-command "goimports")
-(add-hook 'before-save-hook 'gofmt-before-save)
-(global-set-key (kbd "M-*") 'pop-tag-mark)
-
-;;(add-to-list 'yas-snippet-dirs "~/.emacs.files/yasnippet-go")
-(yas-global-mode 1)
-
-
-(add-hook 'go-mode-hook
-	  (lambda()
-	    ;; Convenient binding for go
-	    (global-set-key (kbd "C-c C-i") 'go-goto-imports)
-	    (global-set-key (kbd "C-c C-e") 'go-rename)
-	    (global-set-key (kbd "C-c d") 'godoc-at-point)
-	    (global-set-key (kbd "C-c c") '(lambda() (interactive) (go-coverage "coverprofile")))
-
-	    ;; Go helper for compilation
-	    (global-set-key (kbd "C-c f") 'save-and-compile-program)
-	    (global-set-key (kbd "C-c C-t") 'save-and-test-program)
-	    (global-set-key (kbd "C-c t")   'save-and-make-test-program)
-	    (global-set-key (kbd "C-c b")   'save-and-make-clean-program)
-	    (global-set-key (kbd "C-c C-m") 'save-and-make-program)
-
-	    )
-	  )
-
-;; Kill compilation upon recompile.
-(setq compilation-always-kill t)
-
-(global-set-key (kbd "C-c C-c") 'comment-region)
-(global-set-key (kbd "C-c C-u") 'uncomment-region)
-(global-set-key (kbd "C-c C-r") 'my-recompile)
-(global-set-key (kbd "C-c C-k") 'kill-compilation)
-(global-set-key (kbd "C-c C-l") 'linum-mode)
-
-(defun end-of-line-compile()
-  (setq curbuf (current-buffer))
-  (pop-to-buffer "*compilation*")
-  (end-of-buffer)
-  (pop-to-buffer curbuf)
-  )
-
-;; save all files then run M-x compile
-(defun my-recompile()
-        "Save any unsaved buffers and compile"
-        (interactive)
-        (save-some-buffers t)
-	(end-of-line-compile)
-        (recompile)
-	(end-of-line-compile))
-
-(defun save-and-compile-program()
-        "Save any unsaved buffers and compile"
-        (interactive)
-        (save-some-buffers t)
-        (compile "bash -c 'go install && go build -o /tmp/a.out && /tmp/a.out'")
-	(end-of-line-compile))
-
-(defun save-and-test-program()
-        "Save any unsaved buffers and compile"
-        (interactive)
-        (save-some-buffers t)
-        (compile "go test -v -cover -coverprofile=coverprofile -covermode=count")
-	(end-of-line-compile))
-
-(defun save-and-make-test-program()
-        "Save any unsaved buffers and compile"
-        (interactive)
-        (save-some-buffers t)
-        (compile "make test SKIP_FMT=1 NOPULL=1 TEST_OPTS='-v .'")
-	(end-of-line-compile))
-
-
-(defun save-and-make-clean-program()
-        "Save any unsaved buffers and compile"
-        (interactive)
-        (save-some-buffers t)
-        (compile "make clean")
-	(end-of-line-compile))
-
-(defun save-and-make-program()
-        "Save any unsaved buffers and compile"
-        (interactive)
-        (save-some-buffers t)
-        (compile "make start NOPULL=1")
-	(end-of-line-compile))
-
-(add-hook 'go-mode-hook 'go-eldoc-setup)
-(add-hook 'go-mode-hook 'go-guru-hl-identifier-mode)
-
+(use-package go-mode
+  :mode "\\.go\\'"
+  :custom (gofmt-command "goimports")
+  :config
+  (add-hook 'go-mode-hook 'fci-mode)
+  (add-hook 'go-mode-hook 'flycheck-mode)
+  (add-hook 'go-mode-hook 'flycheck-golangci-lint-setup)
+  ;; run gofmt/goimports when saving the file
+  (add-hook 'before-save-hook #'gofmt-before-save)
+  (setq flycheck-golangci-lint-enable-all t))
 ;;; End of Golang config ;;
 
-;;; Setup auto-complete ;;;
-(require 'auto-complete)
-(require 'go-autocomplete)
-(require 'auto-complete-config)
-;;(setq ac-source-yasnippet nil)
-(ac-config-default)
-(setq ac-delay 0.1)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (dockerfile-mode protobuf-mode magit go-mode go-autocomplete flycheck exec-path-from-shell ensime))))
-
-;; Setup modes.
-(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\'"      . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mk\\'"      . makefile-mode))
-
-;; Load powerline.
-(powerline-default-theme)
-
-(global-set-key (kbd "C-x g") 'magit-status)
