@@ -86,18 +86,18 @@
 ;; Answer yes or no questions with y or n
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; Unique Buffer Names - makes navigation of open buffers easier
-;; (require 'uniquify)
-;; (setq uniquify-buffer-name-style 'reverse)
-;; (setq uniquify-separator "/")
-;; (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
-;; (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
-
 ;; always revert buffers if their files change on disk to reflect new changes
 (global-auto-revert-mode 1)
 
-;; (eval-after-load "vc" '(remove-hook 'find-file-hooks 'vc-find-file-hook))
-(setq vc-handled-backends 'nil)
+;; Store backup files in a central location
+(setq
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.emacs.files/bak/"))    ; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t)       ; use versioned backups
 
 ;; Keybindings
 ;;
