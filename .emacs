@@ -151,15 +151,13 @@
 (setq package-list
       '(
         ;;; General. ;;;
+	auto-complete
         flycheck                ;; Linter.
         yasnippet               ;; Snippet management.
 	yasnippet-snippets
 	fill-column-indicator
 	lsp-mode                ;; Language Server Protocol Support
-	lsp-ui
-        company                 ;; Auto completion.
-	company-lsp
-	company-quickhelp
+	;;lsp-ui
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
 	git                     ;; Better vcs support for git.
@@ -310,135 +308,56 @@
 	      ("C-c r" . helm-resume)
 	      ("C-c i" . helm-imenu)))
 
-;;; Company ;;;
-(use-package company
-  :diminish company-mode
-  :defines
-  (company-dabbrev-ignore-case company-dabbrev-downcase)
-  :bind
-  (:map company-active-map
-   ("C-n" . company-select-next)
-   ("C-p" . company-select-previous)
-   ("<tab>" . company-complete-common-or-cycle)
-   :map company-search-map
-   ("C-p" . company-select-previous)
-   ("C-n" . company-select-next))
-  :custom
-  (company-idle-delay 0)
-  (company-echo-delay 0)
-  (company-minimum-prefix-length 1)
-  :hook
-  (after-init . global-company-mode)
-  (plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
-                            '((company-yasnippet
-                               )))))
-  ((go-mode
-    c++-mode
-    c-mode
-    objc-mode) . (lambda () (set (make-local-variable 'company-backends)
-                            '((company-yasnippet
-                               company-lsp
-                               company-files
-                               )))))
-  :config
-
-  ;; Show quick tooltip
-  (use-package company-quickhelp
-    :defines company-quickhelp-delay
-    :bind (:map company-active-map
-		("M-h" . company-quickhelp-manual-begin))
-    :hook (global-company-mode . company-quickhelp-mode)
-    :custom (company-quickhelp-delay 0.8)))
+;;; Auto Complete ;;;
+(require 'auto-complete)
+(ac-config-default)
+(global-auto-complete-mode t)
+(setq ac-auto-show-menu 0.2)
+(setq ac-delay 0.2)
+(setq ac-menu-height 20)
+(setq ac-auto-start t)
+(setq ac-show-menu-immediately-on-auto-complete t)
 
 ;;; LSP ;;;
 (use-package lsp-mode
-  :commands (lsp)
   :custom
-  ;; debug
-  (lsp-print-io nil)
-  (lsp-trace nil)
-  (lsp-print-performance nil)
-  ;; general
-  (lsp-auto-guess-root t)
-  (lsp-document-sync-method 'incremental) ;; none, full, incremental, or nil
-  (lsp-response-timeout 10)
-  (lsp-prefer-flymake t) ;; t(flymake), nil(lsp-ui), or :none
-  :hook
-  ((go-mode) . lsp)
-  :bind
-  (:map lsp-mode-map
-  ("C-c r"   . lsp-rename))
-  :config
-  (require 'lsp-clients)
-  ;; LSP UI tools
-  (use-package lsp-ui
-    :commands lsp-ui-mode
-    :custom
-    ;; lsp-ui-doc
-    (lsp-ui-doc-enable t)
-    (lsp-ui-doc-header t)
-    (lsp-ui-doc-include-signature nil)
-    (lsp-ui-doc-position 'at-point) ;; top, bottom, or at-point
-    (lsp-ui-doc-max-width 120)
-    (lsp-ui-doc-max-height 30)
-    (lsp-ui-doc-use-childframe t)
-    (lsp-ui-doc-use-webkit t)
-    ;; lsp-ui-flycheck
-    (lsp-ui-flycheck-enable t)
-    ;; lsp-ui-sideline
-    (lsp-ui-sideline-enable nil)
-    (lsp-ui-sideline-ignore-duplicate t)
-    (lsp-ui-sideline-show-symbol t)
-    (lsp-ui-sideline-show-hover t)
-    (lsp-ui-sideline-show-diagnostics t)
-    (lsp-ui-sideline-show-code-actions t)
-    (lsp-ui-sideline-code-actions-prefix "")
-    ;; lsp-ui-imenu
-    (lsp-ui-imenu-enable t)
-    (lsp-ui-imenu-kind-position 'top)
-    ;; lsp-ui-peek
-    (lsp-ui-peek-enable t)
-    (lsp-ui-peek-peek-height 20)
-    (lsp-ui-peek-list-width 50)
-    (lsp-ui-peek-fontify 'on-demand) ;; never, on-demand, or always
-    :preface
-    (defun ladicle/toggle-lsp-ui-doc ()
-      (interactive)
-      (if lsp-ui-doc-mode
-        (progn
-          (lsp-ui-doc-mode -1)
-          (lsp-ui-doc--hide-frame))
-         (lsp-ui-doc-mode 1)))
-    :bind
-    (:map lsp-mode-map
-    ("C-c C-r" . lsp-ui-peek-find-references)
-    ("C-c C-j" . lsp-ui-peek-find-definitions)
-    ("C-c i"   . lsp-ui-peek-find-implementation)
-    ("C-c m"   . lsp-ui-imenu)
-    ("C-c s"   . lsp-ui-sideline-mode)
-    ("C-c d"   . ladicle/toggle-lsp-ui-doc))
-    :hook
-    (lsp-mode . lsp-ui-mode))
-
-  ;; Lsp completion
-  (use-package company-lsp
-    :commands company-lsp
-    :custom
-    (company-lsp-cache-candidates t) ;; auto, t(always using a cache), or nil
-    (company-lsp-async t)
-    (company-lsp-enable-snippet t)
-    (company-lsp-enable-recompletion t)))
+  (lsp-document-sync-method 'full) ;; none, full, incremental, or nil
+  (lsp-prefer-flymake nil)
+  (lsp-keep-workspace-alive t)
+  (lsp-enable-snippet t)
+  (lsp-eldoc-render-all t)
+  (lsp-signature-render-all t)
+  (lsp-enable-completion-at-point t)
+  (lsp-enable-file-watchers t))
 
 ;;; Golang config ;;;
 (use-package go-mode
   :mode "\\.go\\'"
-  :custom (gofmt-command "goimports")
   :config
-  (add-hook 'go-mode-hook 'fci-mode)
-  (add-hook 'go-mode-hook 'flycheck-mode)
-  (add-hook 'go-mode-hook 'flycheck-golangci-lint-setup)
+  (add-hook 'go-mode-hook #'fci-mode)
+  (add-hook 'go-mode-hook #'flycheck-mode)
+  (add-hook 'go-mode-hook #'lsp)
+  (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup)
+  (setq flycheck-golangci-lint-enable-all t)
   ;; run gofmt/goimports when saving the file
-  (add-hook 'before-save-hook #'gofmt-before-save)
-  (setq flycheck-golangci-lint-enable-all t))
+  (setq gofmt-command "goimports")
+  (add-hook 'before-save-hook #'gofmt-before-save))
 ;;; End of Golang config ;;
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (exec-path-from-shell use-package json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme helm-ag helm flycheck-golangci-lint go-mode magit git-gutter+ git switch-buffer-functions multiple-cursors company-quickhelp company-lsp company lsp-ui lsp-mode fill-column-indicator yasnippet-snippets yasnippet flycheck))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:background "#101010"))))
+ '(flycheck-error ((t (:background "#FF6E64" :foreground "#990A1B" :underline t :weight bold))))
+ '(flycheck-info ((t (:background "#69B7F0" :foreground "#00629D" :underline t :weight bold))))
+ '(flycheck-warning ((t (:background "#DEB542" :foreground "#7B6000" :underline t :weight bold)))))
