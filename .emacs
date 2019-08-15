@@ -156,7 +156,7 @@
         yasnippet               ;; Snippet management.
 	yasnippet-snippets
 	whitespace
-;;	fill-column-indicator
+	fill-column-indicator
 	lsp-mode                ;; Language Server Protocol Support
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
@@ -246,9 +246,9 @@
 (global-whitespace-mode t)
 
 ;; ;;; Fill Column Indicator
-;; (require 'fill-column-indicator)
-;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-;; (global-fci-mode 1)
+(require 'fill-column-indicator)
+(define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+(global-fci-mode 1)
 
 ;;; Git gutter config. ;;;
 (global-git-gutter+-mode)
@@ -321,6 +321,7 @@
 (require 'auto-complete)
 (ac-config-default)
 (global-auto-complete-mode t)
+(ac-linum-workaround)
 (setq ac-auto-show-menu 0.2)
 (setq ac-delay 0.2)
 (setq ac-menu-height 10)
@@ -337,6 +338,7 @@
   (lsp-eldoc-render-all t)
   (lsp-signature-render-all t)
   (lsp-enable-completion-at-point t)
+  (lsp-enable-indentation t)
   (lsp-enable-file-watchers t))
 
 ;;; Golang config ;;;
@@ -350,21 +352,3 @@
   (setq gofmt-command "goimports")
   (add-hook 'before-save-hook #'gofmt-before-save))
 ;;; End of Golang config ;;
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (exec-path-from-shell use-package json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme helm-ag helm flycheck-golangci-lint go-mode magit git-gutter+ git switch-buffer-functions multiple-cursors lsp-mode yasnippet-snippets yasnippet flycheck auto-complete))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background "#101010"))))
- '(flycheck-error ((t (:background "#FF6E64" :foreground "#990A1B" :underline t :weight bold))))
- '(flycheck-info ((t (:background "#69B7F0" :foreground "#00629D" :underline t :weight bold))))
- '(flycheck-warning ((t (:background "#DEB542" :foreground "#7B6000" :underline t :weight bold)))))
