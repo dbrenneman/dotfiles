@@ -155,9 +155,9 @@
         flycheck                ;; Linter.
         yasnippet               ;; Snippet management.
 	yasnippet-snippets
-	fill-column-indicator
+	whitespace
+;;	fill-column-indicator
 	lsp-mode                ;; Language Server Protocol Support
-	;;lsp-ui
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
 	git                     ;; Better vcs support for git.
@@ -240,7 +240,35 @@
 ;; Default to dark theme.
 (dark-theme)
 
-;; Enable git gutter mode
+;;; Highlight Whitespace ;;;
+(require 'whitespace)
+(setq whitespace-style '(face empty tabs lines-tail trailing))
+(global-whitespace-mode t)
+
+;; ;;; Fill Column Indicator
+;; (require 'fill-column-indicator)
+;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+;; (global-fci-mode 1)
+
+;; (defun sanityinc/fci-enabled-p () (symbol-value 'fci-mode))
+
+;;   (defvar sanityinc/fci-mode-suppressed nil)
+;;   (make-variable-buffer-local 'sanityinc/fci-mode-suppressed)
+
+;;   (defadvice popup-create (before suppress-fci-mode activate)
+;;     "Suspend fci-mode while popups are visible"
+;;     (let ((fci-enabled (sanityinc/fci-enabled-p)))
+;;       (when fci-enabled
+;;         (setq sanityinc/fci-mode-suppressed fci-enabled)
+;;         (turn-off-fci-mode))))
+
+;;   (defadvice popup-delete (after restore-fci-mode activate)
+;;     "Restore fci-mode when all popups have closed"
+;;     (when (and sanityinc/fci-mode-suppressed
+;;                (null popup-instances))
+;;       (setq sanityinc/fci-mode-suppressed nil)
+;;       (turn-on-fci-mode)))
+
 ;;; Git gutter config. ;;;
 (global-git-gutter+-mode)
 
@@ -314,7 +342,7 @@
 (global-auto-complete-mode t)
 (setq ac-auto-show-menu 0.2)
 (setq ac-delay 0.2)
-(setq ac-menu-height 20)
+(setq ac-menu-height 10)
 (setq ac-auto-start t)
 (setq ac-show-menu-immediately-on-auto-complete t)
 
@@ -334,8 +362,6 @@
 (use-package go-mode
   :mode "\\.go\\'"
   :config
-  (add-hook 'go-mode-hook #'fci-mode)
-  (add-hook 'go-mode-hook #'flycheck-mode)
   (add-hook 'go-mode-hook #'lsp)
   (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup)
   (setq flycheck-golangci-lint-enable-all t)
@@ -351,7 +377,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (exec-path-from-shell use-package json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme helm-ag helm flycheck-golangci-lint go-mode magit git-gutter+ git switch-buffer-functions multiple-cursors company-quickhelp company-lsp company lsp-ui lsp-mode fill-column-indicator yasnippet-snippets yasnippet flycheck))))
+    (exec-path-from-shell use-package json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme helm-ag helm flycheck-golangci-lint go-mode magit git-gutter+ git switch-buffer-functions multiple-cursors lsp-mode yasnippet-snippets yasnippet flycheck auto-complete))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
