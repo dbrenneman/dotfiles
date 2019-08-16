@@ -151,8 +151,10 @@
 (setq package-list
       '(
         ;;; General. ;;;
-	auto-complete
-        flycheck                ;; Linter.
+	;;auto-complete
+	company
+	company-lsp
+	flycheck                ;; Linter.
         yasnippet               ;; Snippet management.
 	yasnippet-snippets
 	whitespace
@@ -298,15 +300,35 @@
 	      ("C-c i" . helm-imenu)))
 
 ;;; Auto Complete ;;;
-(require 'auto-complete)
-(ac-config-default)
-(global-auto-complete-mode t)
-(ac-linum-workaround)
-(setq ac-auto-show-menu 0.8)
-(setq ac-delay 0.8)
-(setq ac-menu-height 10)
-(setq ac-auto-start t)
-(setq ac-show-menu-immediately-on-auto-complete t)
+;; (require 'auto-complete)
+;; (ac-config-default)
+;; (global-auto-complete-mode t)
+;; (ac-linum-workaround)
+;; (setq ac-auto-show-menu 0.8)
+;; (setq ac-delay 0.8)
+;; (setq ac-menu-height 10)
+;; (setq ac-auto-start t)
+;; (setq ac-show-menu-immediately-on-auto-complete t)
+
+;;; Company Mode ;;;
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(require 'company-lsp)
+(push 'company-lsp company-backends)
+
+(defvar-local company-fci-mode-on-p nil)
+
+(defun company-turn-off-fci (&rest ignore)
+  (when (boundp 'fci-mode)
+    (setq company-fci-mode-on-p fci-mode)
+    (when fci-mode (fci-mode -1))))
+
+(defun company-maybe-turn-on-fci (&rest ignore)
+  (when company-fci-mode-on-p (fci-mode 1)))
+
+(add-hook 'company-completion-started-hook 'company-turn-off-fci)
+(add-hook 'company-completion-finished-hook 'company-maybe-turn-on-fci)
+(add-hook 'company-completion-cancelled-hook 'company-maybe-turn-on-fci)
 
 ;;; LSP ;;;
 (use-package lsp-mode
