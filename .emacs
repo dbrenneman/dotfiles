@@ -299,22 +299,13 @@
 	      ("C-c r" . helm-resume)
 	      ("C-c i" . helm-imenu)))
 
-;;; Auto Complete ;;;
-;; (require 'auto-complete)
-;; (ac-config-default)
-;; (global-auto-complete-mode t)
-;; (ac-linum-workaround)
-;; (setq ac-auto-show-menu 0.8)
-;; (setq ac-delay 0.8)
-;; (setq ac-menu-height 10)
-;; (setq ac-auto-start t)
-;; (setq ac-show-menu-immediately-on-auto-complete t)
-
 ;;; Company Mode ;;;
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
 (require 'company-lsp)
 (push 'company-lsp company-backends)
+(setq company-lsp-async t)
+(setq company-lsp-enable-snippet t)
 
 (defvar-local company-fci-mode-on-p nil)
 
