@@ -160,8 +160,7 @@
 	lsp-mode                ;; Language Server Protocol Support
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
-	git                     ;; Better vcs support for git.
-	git-gutter+             ;; Display / manage git changes.
+	git-gutter              ;; Display / manage git changes.
 	magit                   ;; Git client.
 
         ;; For golang.
@@ -251,29 +250,10 @@
 (global-fci-mode 1)
 
 ;;; Git gutter config. ;;;
-(global-git-gutter+-mode)
-
-(global-set-key (kbd "C-x C-g") 'global-git-gutter+-mode) ; Turn on/off globally.
-
-(eval-after-load 'git-gutter+
-  '(progn
-     ;;; Jump between hunks.
-     (define-key git-gutter+-mode-map (kbd "C-x n") 'git-gutter+-next-hunk)
-     (define-key git-gutter+-mode-map (kbd "C-x p") 'git-gutter+-previous-hunk)
-
-     ;;; Act on hunks.
-     (define-key git-gutter+-mode-map (kbd "C-x v =") 'git-gutter+-show-hunk)
-     (define-key git-gutter+-mode-map (kbd "C-x r")   'git-gutter+-revert-hunks)
-
-     ;; Stage hunk at point.
-     ;; If region is active, stage all hunk lines within the region.
-     (define-key git-gutter+-mode-map (kbd "C-x t")   'git-gutter+-stage-hunks)
-     (define-key git-gutter+-mode-map (kbd "C-x c")   'git-gutter+-commit)
-     (define-key git-gutter+-mode-map (kbd "C-x C")   'git-gutter+-stage-and-commit)
-     (define-key git-gutter+-mode-map (kbd "C-x C-y") 'git-gutter+-stage-and-commit-whole-buffer)
-     (define-key git-gutter+-mode-map (kbd "C-x U")   'git-gutter+-unstage-whole-buffer)))
+(global-git-gutter-mode +1)
 
 ;;; Magit config. ;;;
+(remove-hook 'find-file-hook 'vc-find-file-hook) ;; disable vc-mode
 (global-set-key (kbd "C-x g") 'magit-status)
 
 ;;; Ediff config. ;;;
@@ -322,8 +302,8 @@
 (ac-config-default)
 (global-auto-complete-mode t)
 (ac-linum-workaround)
-(setq ac-auto-show-menu 0.2)
-(setq ac-delay 0.2)
+(setq ac-auto-show-menu 0.8)
+(setq ac-delay 0.8)
 (setq ac-menu-height 10)
 (setq ac-auto-start t)
 (setq ac-show-menu-immediately-on-auto-complete t)
