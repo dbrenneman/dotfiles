@@ -152,12 +152,12 @@
       '(
         ;;; General. ;;;
 	company
-	company-go
 	flycheck                ;; Linter.
         yasnippet               ;; Snippet management.
 	yasnippet-snippets
 	whitespace
 	fill-column-indicator
+	highlight-indent-guides
 	lsp-mode                ;; Language Server Protocol Support
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
@@ -168,6 +168,7 @@
         ;; For golang.
         go-mode                 ;; Go major mode.
 	flycheck-golangci-lint
+	company-go
 
         ;;; Helm. ;;;
         helm
@@ -245,6 +246,11 @@
 (require 'whitespace)
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 (global-whitespace-mode t)
+
+;;; Highlight Indent Guides ;;;
+(setq highlight-indent-guides-method 'character)
+(setq highlight-indent-guides-responsive 'top)
+(setq highlight-indent-guides-delay 0)
 
 ;;; Fill Column Indicator ;;;
 (require 'fill-column-indicator)
@@ -340,6 +346,7 @@
 (use-package go-mode
   :mode "\\.go\\'"
   :config
+  (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
   (add-hook 'go-mode-hook #'lsp)
   (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup)
   (setq flycheck-golangci-lint-enable-all t)
