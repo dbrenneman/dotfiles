@@ -151,9 +151,8 @@
 (setq package-list
       '(
         ;;; General. ;;;
-	;;auto-complete
 	company
-	company-lsp
+	company-go
 	flycheck                ;; Linter.
         yasnippet               ;; Snippet management.
 	yasnippet-snippets
@@ -162,6 +161,7 @@
 	lsp-mode                ;; Language Server Protocol Support
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
+	projectile
 	git-gutter              ;; Display / manage git changes.
 	magit                   ;; Git client.
 
@@ -246,10 +246,15 @@
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 (global-whitespace-mode t)
 
-;; ;;; Fill Column Indicator
+;;; Fill Column Indicator ;;;
 (require 'fill-column-indicator)
 (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
 (global-fci-mode 1)
+
+;;; Projectile ;;;
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
 ;;; Git gutter config. ;;;
 (global-git-gutter-mode +1)
@@ -302,10 +307,6 @@
 ;;; Company Mode ;;;
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
-(require 'company-lsp)
-(push 'company-lsp company-backends)
-(setq company-lsp-async t)
-(setq company-lsp-enable-snippet t)
 
 (defvar-local company-fci-mode-on-p nil)
 
@@ -324,6 +325,7 @@
 ;;; LSP ;;;
 (use-package lsp-mode
   :custom
+  (lsp-auto-guess-root t)
   (lsp-document-sync-method 'full) ;; none, full, incremental, or nil
   (lsp-prefer-flymake nil)
   (lsp-keep-workspace-alive t)
@@ -341,6 +343,9 @@
   (add-hook 'go-mode-hook #'lsp)
   (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup)
   (setq flycheck-golangci-lint-enable-all t)
+  (add-hook 'go-mode-hook (lambda ()
+                          (set (make-local-variable 'company-backends) '(company-go))
+                          (company-mode)))
   ;; run gofmt/goimports when saving the file
   (setq gofmt-command "goimports")
   (add-hook 'before-save-hook #'gofmt-before-save))
