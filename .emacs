@@ -152,6 +152,7 @@
       '(
         ;;; General. ;;;
 	company
+	diminish
 	flycheck                ;; Linter.
         yasnippet               ;; Snippet management.
 	yasnippet-snippets
@@ -242,8 +243,11 @@
 ;; Default to dark theme.
 (dark-theme)
 
+(require 'diminish)
+
 ;;; Highlight Whitespace ;;;
 (require 'whitespace)
+(diminish 'global-whitespace-mode)
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 (global-whitespace-mode t)
 
@@ -259,11 +263,13 @@
 
 ;;; Projectile ;;;
 (projectile-mode +1)
+(diminish 'projectile-mode)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
 ;;; Git gutter config. ;;;
 (global-git-gutter-mode +1)
+(diminish 'git-gutter-mode)
 
 ;;; Magit config. ;;;
 (remove-hook 'find-file-hook 'vc-find-file-hook) ;; disable vc-mode
@@ -279,6 +285,7 @@
 ;;               "~/.emacs.d/plugins/yasnippet")
 (require 'yasnippet)
 (yas-global-mode 1)
+(diminish 'yas-minor-mode)
 
 ;;; Flycheck config. ;;;
 (add-hook 'after-init-hook 'global-flycheck-mode)            ;; Enable flycheck everywhere.
@@ -309,10 +316,12 @@
 	      ("C-c L" . helm-locate)
 	      ("C-c r" . helm-resume)
 	      ("C-c i" . helm-imenu)))
+(diminish 'helm-mode)
 
 ;;; Company Mode ;;;
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
+(diminish 'company-mode)
 
 (defvar-local company-fci-mode-on-p nil)
 
