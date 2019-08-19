@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# Brew install git go wireshark docker virtualbox vagrant emacs
+# git clone powerline
+# install dotfile links
+
 cd "$(dirname "$0")"
 git pull
 function doIt() {
