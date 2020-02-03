@@ -23,5 +23,5 @@ setopt share_history
 # Only load Liquid Prompt in interactive shells, not from a script or from scp
 [[ $- = *i* ]] && source ~/liquidprompt/liquidprompt
 
-alias editor="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
+alias editor="GOPRIVATE=*.apple.com GO111MODULE=on /Applications/Emacs.app/Contents/MacOS/Emacs -nw"
 alias edit="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n"
