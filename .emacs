@@ -151,7 +151,6 @@
 (setq package-list
       '(
         ;;; General. ;;;
-	company
 	diminish
 	flycheck                ;; Linter.
         yasnippet               ;; Snippet management.
@@ -160,6 +159,9 @@
 	fill-column-indicator
 	highlight-indent-guides
 	lsp-mode                ;; Language Server Protocol Support
+	lsp-ui
+	company
+	company-lsp
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
 	projectile
@@ -292,7 +294,7 @@
 (global-set-key (kbd "C-c <up>")   'flycheck-next-error)     ;; Ctrl-up   to go to next error.
 (global-set-key (kbd "C-c <down>") 'flycheck-previous-error) ;; Ctrl-down to go to previous error.
 (global-set-key (kbd "C-c l")      'flycheck-list-errors)    ;; Ctrl-l    to display error list.
-(setq flycheck-display-errors-delay 0)
+(setq flycheck-display-errors-delay 1)
 
 ;;; Helm ;;;
 (use-package helm
@@ -319,7 +321,20 @@
 (diminish 'helm-mode)
 
 ;;; Company Mode ;;;
-(require 'company)
+(use-package company
+:ensure t
+:config (progn
+;; don't add any dely before trying to complete thing being typed
+;; the call/response to gopls is asynchronous so this should have little
+;; to no affect on edit latency
+            (setq company-idle-delay 0)
+;; start completing after a single character instead of 3
+            (setq company-minimum-prefix-length 1)
+;; align fields in completions
+            (setq company-tooltip-align-annotations t)
+            )
+)
+
 (add-hook 'after-init-hook 'global-company-mode)
 (diminish 'company-mode)
 
@@ -339,6 +354,7 @@
 
 ;;; LSP ;;;
 (use-package lsp-mode
+  :commands (lsp lsp-deferred)
   :custom
   (lsp-auto-guess-root t)
   (lsp-document-sync-method 'full) ;; none, full, incremental, or nil
@@ -351,18 +367,50 @@
   (lsp-enable-indentation t)
   (lsp-enable-file-watchers t))
 
+(use-package company-lsp
+:ensure t
+:commands company-lsp)
+
+(use-package lsp-ui
+:ensure t
+:commands lsp-ui-mode
+:config (progn
+;; disable inline documentation
+            (setq lsp-ui-sideline-enable nil)
+;; disable showing docs on hover at the top of the window
+            (setq lsp-ui-doc-enable nil))
+)
+
 ;;; Golang config ;;;
 (use-package go-mode
+  :ensure t
   :mode "\\.go\\'"
+  :hook ((go-mode . lsp-deferred)
+         (before-save . lsp-format-buffer)
+         (before-save . lsp-organize-imports))
   :config
   (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
-  (add-hook 'go-mode-hook #'lsp)
   (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup)
   (setq flycheck-golangci-lint-enable-all t)
   (add-hook 'go-mode-hook (lambda ()
                           (set (make-local-variable 'company-backends) '(company-go))
                           (company-mode)))
-  ;; run gofmt/goimports when saving the file
-  (setq gofmt-command "goimports")
-  (add-hook 'before-save-hook #'gofmt-before-save))
+)
 ;;; End of Golang config ;;
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (exec-path-from-shell use-package json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme helm-ag helm company-go flycheck-golangci-lint go-mode magit git-gutter projectile switch-buffer-functions multiple-cursors lsp-mode highlight-indent-guides fill-column-indicator yasnippet-snippets yasnippet flycheck diminish company))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:background "#101010"))))
+ '(flycheck-error ((t (:background "#FF6E64" :foreground "#990A1B" :underline t :weight bold))))
+ '(flycheck-info ((t (:background "#69B7F0" :foreground "#00629D" :underline t :weight bold))))
+ '(flycheck-warning ((t (:background "#DEB542" :foreground "#7B6000" :underline t :weight bold)))))
