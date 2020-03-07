@@ -170,8 +170,10 @@
 
         ;; For golang.
         go-mode                 ;; Go major mode.
+	;go-autocomplete
 	flycheck-golangci-lint
-	company-go
+	;company-go
+	;go-eldoc
 
         ;;; Helm. ;;;
         helm
@@ -282,19 +284,12 @@
 (setq ediff-diff-options "-w")                ;; Turn off whitespace checking:
 (setq ediff-show-clashes-only t)              ;; Default to conflict diff.
 
-;;; Snippets ;;;
-;; (add-to-list 'load-path
-;;               "~/.emacs.d/plugins/yasnippet")
-(require 'yasnippet)
-(yas-global-mode 1)
-(diminish 'yas-minor-mode)
-
 ;;; Flycheck config. ;;;
 (add-hook 'after-init-hook 'global-flycheck-mode)            ;; Enable flycheck everywhere.
 (global-set-key (kbd "C-c <up>")   'flycheck-next-error)     ;; Ctrl-up   to go to next error.
 (global-set-key (kbd "C-c <down>") 'flycheck-previous-error) ;; Ctrl-down to go to previous error.
 (global-set-key (kbd "C-c l")      'flycheck-list-errors)    ;; Ctrl-l    to display error list.
-(setq flycheck-display-errors-delay 1)
+(setq flycheck-display-errors-delay 0)
 
 ;;; Helm ;;;
 (use-package helm
@@ -320,21 +315,41 @@
 	      ("C-c i" . helm-imenu)))
 (diminish 'helm-mode)
 
-;;; Company Mode ;;;
-(use-package company
-:ensure t
-:config (progn
-;; don't add any dely before trying to complete thing being typed
-;; the call/response to gopls is asynchronous so this should have little
-;; to no affect on edit latency
-            (setq company-idle-delay 0)
-;; start completing after a single character instead of 3
-            (setq company-minimum-prefix-length 1)
-;; align fields in completions
-            (setq company-tooltip-align-annotations t)
-            )
-)
+;;; LSP ;;;
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :hook (go-mode . lsp-deferred)
+  :custom
+  (lsp-auto-guess-root t)
+  (lsp-register-custom-settings
+   '(("gopls.completeUnimported" t t)
+     ("gopls.deepCompletion" t t)
+     ("gopls.staticcheck" t t))
+   )
+  )
+;; Set up before-save hooks to format buffer and add/delete imports.
+;; Make sure you don't have other gofmt/goimports hooks enabled.
+(defun lsp-go-install-save-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
 
+;; Optional - provides fancier overlays.
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
+(setq lsp-ui-flycheck-enable t)
+
+;; Company mode is a standard completion package that works well with lsp-mode.
+(use-package company
+  :ensure t
+  :config
+  ;; Optionally enable completion-as-you-type behavior.
+  (setq company-idle-delay 0.0)
+  (setq company-minimum-prefix-length 1)
+  (setq company-tooltip-align-annotations t)
+  )
 (add-hook 'after-init-hook 'global-company-mode)
 (diminish 'company-mode)
 
@@ -352,50 +367,41 @@
 (add-hook 'company-completion-finished-hook 'company-maybe-turn-on-fci)
 (add-hook 'company-completion-cancelled-hook 'company-maybe-turn-on-fci)
 
-;;; LSP ;;;
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :custom
-  (lsp-auto-guess-root t)
-  (lsp-document-sync-method 'full) ;; none, full, incremental, or nil
-  (lsp-prefer-flymake nil)
-  (lsp-keep-workspace-alive t)
-  (lsp-enable-snippet t)
-  (lsp-eldoc-render-all t)
-  (lsp-signature-render-all t)
-  (lsp-enable-completion-at-point t)
-  (lsp-enable-indentation t)
-  (lsp-enable-file-watchers t))
 
+;; company-lsp integrates company mode completion with lsp-mode.
+;; completion-at-point also works out of the box but doesn't support snippets.
 (use-package company-lsp
-:ensure t
-:commands company-lsp)
+  :ensure t
+  :commands company-lsp)
 
-(use-package lsp-ui
-:ensure t
-:commands lsp-ui-mode
-:config (progn
-;; disable inline documentation
-            (setq lsp-ui-sideline-enable nil)
-;; disable showing docs on hover at the top of the window
-            (setq lsp-ui-doc-enable nil))
-)
+;;; Snippets ;;;
+;; (add-to-list 'load-path
+;;               "~/.emacs.d/plugins/yasnippet")
+;; Optional - provides snippet support.
+(use-package yasnippet
+  :ensure t
+  :commands yas-minor-mode
+  :hook (go-mode . yas-minor-mode))
+(diminish 'yas-minor-mode)
 
 ;;; Golang config ;;;
 (use-package go-mode
   :ensure t
   :mode "\\.go\\'"
-  :hook ((go-mode . lsp-deferred)
-         (before-save . lsp-format-buffer)
-         (before-save . lsp-organize-imports))
   :config
-  (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
-  (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup)
+  (setenv "GO111MODULE" "on")
+  (setenv "GOPRIVATE" "*.apple.com")
+  (setenv "GOFLAGS" "-mod=vendor")
   (setq flycheck-golangci-lint-enable-all t)
-  (add-hook 'go-mode-hook (lambda ()
-                          (set (make-local-variable 'company-backends) '(company-go))
-                          (company-mode)))
+  (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
 )
+(use-package flycheck-golangci-lint
+  :ensure t
+  :hook (go-mode . flycheck-golangci-lint-setup)
+)
+(add-hook 'lsp-after-initialize-hook (lambda
+                                       ()
+                                       (flycheck-add-next-checker 'lsp 'golangci-lint)))
 ;;; End of Golang config ;;
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -404,7 +410,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (exec-path-from-shell use-package json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme helm-ag helm company-go flycheck-golangci-lint go-mode magit git-gutter projectile switch-buffer-functions multiple-cursors lsp-mode highlight-indent-guides fill-column-indicator yasnippet-snippets yasnippet flycheck diminish company))))
+    (company-lsp lsp-ui yasnippet-snippets yaml-mode use-package switch-buffer-functions solarized-theme protobuf-mode projectile powerline multiple-cursors monokai-theme magit lsp-mode json-mode highlight-indent-guides helm-ag go-mode git-gutter flycheck-golangci-lint fill-column-indicator exec-path-from-shell dockerfile-mode diminish company))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -414,3 +420,6 @@
  '(flycheck-error ((t (:background "#FF6E64" :foreground "#990A1B" :underline t :weight bold))))
  '(flycheck-info ((t (:background "#69B7F0" :foreground "#00629D" :underline t :weight bold))))
  '(flycheck-warning ((t (:background "#DEB542" :foreground "#7B6000" :underline t :weight bold)))))
+
+(provide '.emacs)
+;;; .emacs ends here

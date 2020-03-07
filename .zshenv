@@ -7,4 +7,4 @@ aws-profile() {
 }
 
 export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:/usr/local/bin:/usr/local/go/bin:$PATH
+export PATH=$GOPATH/bin:/usr/local/bin:$PATH
