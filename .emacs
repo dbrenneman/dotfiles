@@ -289,7 +289,11 @@
 (global-set-key (kbd "C-c <up>")   'flycheck-next-error)     ;; Ctrl-up   to go to next error.
 (global-set-key (kbd "C-c <down>") 'flycheck-previous-error) ;; Ctrl-down to go to previous error.
 (global-set-key (kbd "C-c l")      'flycheck-list-errors)    ;; Ctrl-l    to display error list.
-(setq flycheck-display-errors-delay 0)
+(setq flycheck-check-syntax-automatically '(mode-enabled idle-change save))
+(setq flycheck-display-errors-delay 1)
+(setq flycheck-idle-buffer-switch-delay 10)
+(setq flycheck-idle-change-delay 10)
+
 
 ;;; Helm ;;;
 (use-package helm
@@ -393,6 +397,7 @@
   (setenv "GOPRIVATE" "*.apple.com")
   (setenv "GOFLAGS" "-mod=vendor")
   (setq flycheck-golangci-lint-enable-all t)
+  (setq flycheck-golangci-lint-fast t)
   (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
 )
 (use-package flycheck-golangci-lint

@@ -8,3 +8,6 @@ curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/insta
 
 echo "Installing goconvey..."
 go get -u github.com/smartystreets/goconvey
+
+echo "Installing cover..."
+go get golang.org/x/tools/cmd/cover
