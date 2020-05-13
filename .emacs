@@ -350,7 +350,7 @@
   :ensure t
   :config
   ;; Optionally enable completion-as-you-type behavior.
-  (setq company-idle-delay 0.0)
+  (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 1)
   (setq company-tooltip-align-annotations t)
   )
@@ -396,7 +396,6 @@
   (setenv "GO111MODULE" "on")
   (setenv "GOPRIVATE" "*.apple.com")
   (setenv "GOFLAGS" "-mod=vendor")
-  (setq flycheck-golangci-lint-enable-all t)
   (setq flycheck-golangci-lint-fast t)
   (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
 )
@@ -428,3 +427,4 @@
 
 (provide '.emacs)
 ;;; .emacs ends here
+(put 'upcase-region 'disabled nil)
