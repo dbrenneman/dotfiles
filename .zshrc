@@ -2,10 +2,6 @@
 export LC_ALL="en_US.UTF-8"
 export LANG="en_US"
 
-HISTFILE=~/.histfile
-HISTSIZE=1000
-SAVEHIST=1000
-
 setopt appendhistory beep extendedglob nomatch notify
 bindkey -e
 
@@ -14,10 +10,16 @@ zstyle :compinstall filename '/Users/dbrenneman/.zshrc'
 autoload -Uz compinit
 compinit
 
-# Appends every command to the history file once it is executed
-setopt inc_append_history
-# Reloads the history whenever you use it
-setopt share_history
+#############################################################################
+# History Configuration
+##############################################################################
+HISTSIZE=500000               #How many lines of history to keep in memory
+HISTFILE=~/.zsh_history     #Where to save history to disk
+SAVEHIST=1000000               #Number of history entries to save to disk
+HISTDUP=erase               #Erase duplicates in the history file
+setopt    appendhistory     #Append history to the history file (no overwriting)
+setopt    sharehistory      #Share history across terminals
+setopt    incappendhistory  #Immediately append to the history file, not just when a term is killed
 
 #
 # Only load Liquid Prompt in interactive shells, not from a script or from scp
