@@ -396,16 +396,17 @@
   (setenv "GO111MODULE" "on")
   (setenv "GOPRIVATE" "*.apple.com")
   (setenv "GOFLAGS" "-mod=vendor")
-  (setq flycheck-golangci-lint-fast t)
   (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
 )
-(use-package flycheck-golangci-lint
-  :ensure t
-  :hook (go-mode . flycheck-golangci-lint-setup)
-)
-(add-hook 'lsp-after-initialize-hook (lambda
-                                       ()
-                                       (flycheck-add-next-checker 'lsp 'golangci-lint)))
+;; (use-package flycheck-golangci-lint
+;;   :ensure t
+;;   :hook (go-mode . flycheck-golangci-lint-setup)
+;;   :config
+;;   (setq flycheck-golangci-lint-fast t)
+;; )
+;; (add-hook 'lsp-after-initialize-hook (lambda
+;;                                        ()
+;;                                        (flycheck-add-next-checker 'lsp 'golangci-lint)))
 ;;; End of Golang config ;;
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
