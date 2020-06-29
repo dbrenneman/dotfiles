@@ -30,3 +30,38 @@ setopt    incappendhistory  #Immediately append to the history file, not just wh
 
 alias editor="GOPRIVATE=*.apple.com GO111MODULE=on /Applications/Emacs.app/Contents/MacOS/Emacs -nw"
 alias edit="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n"
+
+
+cvrgo () {
+	t=$(mktemp)
+	go test -coverprofile=$t $@ && go tool cover -func=$t && unlink $t
+}
+cvrgohtml () {
+	t=$(mktemp)
+	go test -covermode=count -coverprofile=$t $@ && go tool cover -func=$t && go tool cover -html=$t && unlink $t
+}
+qq() {
+    clear
+
+    logpath="$TMPDIR/q"
+    if [[ -z "$TMPDIR" ]]; then
+        logpath="/tmp/q"
+    fi
+
+    if [[ ! -f "$logpath" ]]; then
+        echo 'Q LOG' > "$logpath"
+    fi
+
+    tail -100f -- "$logpath"
+}
+
+rmqq() {
+    logpath="$TMPDIR/q"
+    if [[ -z "$TMPDIR" ]]; then
+        logpath="/tmp/q"
+    fi
+    if [[ -f "$logpath" ]]; then
+        rm "$logpath"
+    fi
+    qq
+}
