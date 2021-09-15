@@ -169,6 +169,7 @@
 	selectrum
 	selectrum-prescient
         go-mode                 ;; Go major mode.
+	ag
 	;;flycheck-golangci-lint
 
         ;;; Themes. ;;;
