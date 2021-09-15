@@ -7,6 +7,10 @@ bindkey -e
 
 zstyle :compinstall filename '/Users/dbrenneman/.zshrc'
 
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+fi
+
 autoload -Uz compinit
 compinit
 
@@ -21,14 +25,10 @@ setopt    appendhistory     #Append history to the history file (no overwriting)
 setopt    sharehistory      #Share history across terminals
 setopt    incappendhistory  #Immediately append to the history file, not just when a term is killed
 
-#
-# Only load Liquid Prompt in interactive shells, not from a script or from scp
-[[ $- = *i* ]] && source ~/liquidprompt/liquidprompt
-
 # kubectl autocomplete
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 
-alias editor="GOPRIVATE=*.apple.com GO111MODULE=on /Applications/Emacs.app/Contents/MacOS/Emacs -nw"
+alias editor="/Applications/Emacs.app/Contents/MacOS/bin/emacs"
 alias edit="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n"
 
 
@@ -36,10 +36,12 @@ cvrgo () {
 	t=$(mktemp)
 	go test -coverprofile=$t $@ && go tool cover -func=$t && unlink $t
 }
+
 cvrgohtml () {
 	t=$(mktemp)
 	go test -covermode=count -coverprofile=$t $@ && go tool cover -func=$t && go tool cover -html=$t && unlink $t
 }
+
 qq() {
     clear
 
@@ -65,3 +67,8 @@ rmqq() {
     fi
     qq
 }
+
+eval "$(starship init zsh)"
+export PATH="/usr/local/opt/curl/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
+export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"

@@ -15,8 +15,8 @@
 (defun display-startup-echo-area-message ()
   (message ""))
 
-;; use cat as the pager within emacs buffers
-(setenv "PAGER" "cat")
+;; use bat as the pager within emacs buffers
+(setenv "PAGER" "bat")
 
 ;; Use UTF-8 encoding
 (prefer-coding-system 'utf-8-unix)
@@ -54,7 +54,7 @@
 (show-paren-mode 1)
 (setq paren-sexp-mode 'never)
 
-;; turn on automatic bracket insertion by pairs. New in emacs 24
+;; turn on automatic bracket insertion by pairs.
 (electric-pair-mode 1)
 
 ;; dont show passwords in clear text
@@ -161,23 +161,15 @@
 	lsp-mode                ;; Language Server Protocol Support
 	lsp-ui
 	company
-	company-lsp
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
 	projectile
 	git-gutter              ;; Display / manage git changes.
 	magit                   ;; Git client.
-
-        ;; For golang.
+	selectrum
+	selectrum-prescient
         go-mode                 ;; Go major mode.
-	;go-autocomplete
-	flycheck-golangci-lint
-	;company-go
-	;go-eldoc
-
-        ;;; Helm. ;;;
-        helm
-	helm-ag
+	;;flycheck-golangci-lint
 
         ;;; Themes. ;;;
         monokai-theme
@@ -190,6 +182,7 @@
 	protobuf-mode
 	yaml-mode
         json-mode
+	terraform-mode
 
 	use-package
 ))
@@ -247,12 +240,16 @@
 ;; Default to dark theme.
 (dark-theme)
 
+(selectrum-mode +1)
+(selectrum-prescient-mode +1)
+(prescient-persist-mode +1)
+
 (require 'diminish)
 
 ;;; Highlight Whitespace ;;;
 (require 'whitespace)
 (diminish 'global-whitespace-mode)
-(setq whitespace-style '(face empty tabs lines-tail trailing))
+(setq whitespace-style '(face empty tabs trailing))
 (global-whitespace-mode t)
 
 ;;; Highlight Indent Guides ;;;
@@ -295,35 +292,14 @@
 (setq flycheck-idle-change-delay 10)
 
 
-;;; Helm ;;;
-(use-package helm
-	     :init
-	     (setq helm-split-window-default-side 'other)
-	     (helm-mode 1)
-	     :config
-	     (define-key helm-find-files-map
-	       (kbd "<backtab>") #'helm-select-action)
-	     (define-key helm-find-files-map
-	       (kbd "C-i")  #'helm-execute-persistent-action)
-	     :bind
-	     (("M-x" . helm-M-x)
-	      ("M-y" . helm-show-kill-ring)
-	      ("C-x C-f" . helm-find-files)
-	      ("C-c o" . helm-occur)
-	      ("C-x b" . helm-mini)
-	      ("C-x r b" . helm-bookmarks)
-	      ("C-h a" . helm-apropos)
-	      ("C-h d" . helm-info-at-point)
-	      ("C-c L" . helm-locate)
-	      ("C-c r" . helm-resume)
-	      ("C-c i" . helm-imenu)))
-(diminish 'helm-mode)
-
 ;;; LSP ;;;
 (use-package lsp-mode
   :ensure t
   :commands (lsp lsp-deferred)
   :hook (go-mode . lsp-deferred)
+  :config (progn
+           ;; use flycheck, not flymake
+           (setq lsp-prefer-flymake nil))
   :custom
   (lsp-auto-guess-root t)
   (lsp-register-custom-settings
@@ -331,7 +307,16 @@
      ("gopls.deepCompletion" t t)
      ("gopls.staticcheck" t t))
    )
-  )
+  (lsp-register-client
+  (make-lsp-client :new-connection (lsp-stdio-connection '("/usr/local/bin/terraform-ls" "serve"))
+                   :major-modes '(terraform-mode)
+                   :server-id 'terraform-ls))
+
+  (add-hook 'terraform-mode-hook #'lsp)
+
+)
+(setq lsp-eldoc-render-all t)
+
 ;; Set up before-save hooks to format buffer and add/delete imports.
 ;; Make sure you don't have other gofmt/goimports hooks enabled.
 (defun lsp-go-install-save-hooks ()
@@ -343,7 +328,9 @@
 (use-package lsp-ui
   :ensure t
   :commands lsp-ui-mode)
-(setq lsp-ui-flycheck-enable t)
+
+(setq lsp-ui-doc-enable nil
+      lsp-ui-flycheck-enable t)
 
 ;; Company mode is a standard completion package that works well with lsp-mode.
 (use-package company
@@ -371,22 +358,18 @@
 (add-hook 'company-completion-finished-hook 'company-maybe-turn-on-fci)
 (add-hook 'company-completion-cancelled-hook 'company-maybe-turn-on-fci)
 
-
-;; company-lsp integrates company mode completion with lsp-mode.
-;; completion-at-point also works out of the box but doesn't support snippets.
-(use-package company-lsp
-  :ensure t
-  :commands company-lsp)
-
 ;;; Snippets ;;;
-;; (add-to-list 'load-path
-;;               "~/.emacs.d/plugins/yasnippet")
-;; Optional - provides snippet support.
 (use-package yasnippet
   :ensure t
   :commands yas-minor-mode
   :hook (go-mode . yas-minor-mode))
+
 (diminish 'yas-minor-mode)
+
+(add-hook 'git-commit-mode
+          (lambda ()
+            (when (derived-mode-p 'text-mode)
+              (yas-activate-extra-mode 'text-mode+git-commit-mode))))
 
 ;;; Golang config ;;;
 (use-package go-mode
@@ -398,24 +381,19 @@
   (setenv "GOFLAGS" "-mod=vendor")
   (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
 )
-;; (use-package flycheck-golangci-lint
-;;   :ensure t
-;;   :hook (go-mode . flycheck-golangci-lint-setup)
-;;   :config
-;;   (setq flycheck-golangci-lint-fast t)
-;; )
-;; (add-hook 'lsp-after-initialize-hook (lambda
-;;                                        ()
-;;                                        (flycheck-add-next-checker 'lsp 'golangci-lint)))
+
+(add-hook 'go-mode-hook
+    (lambda ()
+    (flyspell-prog-mode)
+    ))
+
 ;;; End of Golang config ;;
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (company-lsp lsp-ui yasnippet-snippets yaml-mode use-package switch-buffer-functions solarized-theme protobuf-mode projectile powerline multiple-cursors monokai-theme magit lsp-mode json-mode highlight-indent-guides helm-ag go-mode git-gutter flycheck-golangci-lint fill-column-indicator exec-path-from-shell dockerfile-mode diminish company))))
+
+;;; Markdown Spello Prevention ;;;
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+;;;
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -429,3 +407,11 @@
 (provide '.emacs)
 ;;; .emacs ends here
 (put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(exec-path-from-shell use-package terraform-mode json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme go-mode magit git-gutter projectile switch-buffer-functions multiple-cursors company lsp-ui lsp-mode highlight-indent-guides fill-column-indicator yasnippet-snippets yasnippet flycheck diminish)))

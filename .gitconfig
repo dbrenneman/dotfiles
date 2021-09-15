@@ -1,10 +1,11 @@
 [user]
-  name = David Brenneman
-  email = db@davidbrenneman.com
+    name = David Brenneman
+    email = db@davidbrenneman.com
 
 [alias]
   st = status
   ci = commit
+  commit = commit
   br = branch
   co = checkout
   df = diff
@@ -16,7 +17,7 @@
   # Diff
   d = diff --patch-with-stat
   # Pull in remote changes for the current repository and all its submodules
-  p = !"git pull; git submodule foreach git pull origin master"
+  p = !"git pull; git submodule foreach git pull origin main"
   # Clone a repository including all submodules
   c = clone --recursive
   # Commit all changes
@@ -24,7 +25,7 @@
   # Switch to a branch, creating it if necessary
   go = checkout -B
   # Undo a `git push`
-  undopush = push -f origin HEAD^:master
+  undopush = push -f origin HEAD^:main
 
 [apply]
   # Detect whitespace errors when applying a patch
@@ -36,10 +37,28 @@
   attributesfile = ~/.gitattributes
   # Treat spaces before tabs, lines that are indented with 8 or more spaces, and all kinds of trailing whitespace as an error
   whitespace = space-before-tab,indent-with-non-tab,trailing-space
+  pager = delta
+
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+  features = side-by-side line-numbers decorations
+  whitespace-error-style = 22 reverse
+  side-by-side = true
+  syntax-theme = Dracula
+[delta "decorations"]
+  commit-decoration-style = bold yellow box ul
+  file-style = bold yellow ul
+  file-decoration-style = none
 
 [color]
   # Use colors in Git commands that are capable of colored output when outputting to the terminal
   ui = auto
+  diff = auto
+  status = auto
+  branch = auto
+  interactive = auto
 
 [color "branch"]
   current = yellow reverse
@@ -57,14 +76,10 @@
   changed = green
   untracked = cyan
 
-[merge]
-  # Include summaries of merged commits in newly created merge commit messages
-  log = true
-
-# Use `origin` as the default remote on the `master` branch in all cases
-[branch "master"]
+# Use `origin` as the default remote on the `main` branch in all cases
+[branch "main"]
   remote = origin
-  merge = refs/heads/master
+  merge = refs/heads/main
 
 # URL shorthands
 [url "git@github.com:"]
@@ -82,5 +97,19 @@
 
 [url "git://gist.github.com/"]
   insteadOf = "gist:"
+
 [push]
-	default = simple
+  default = simple
+
+# [commit]
+#   gpgSign = true
+
+[tag]
+  forceSignAnnotated = true
+
+[merge]
+  # Include summaries of merged commits in newly created merge commit messages
+  log = true
+
+[init]
+	defaultBranch = main
