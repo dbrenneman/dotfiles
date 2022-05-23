@@ -32,6 +32,16 @@ alias editor="/Applications/Emacs.app/Contents/MacOS/bin/emacs"
 alias edit="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n"
 
 
+aws-profile() {
+  if [[ "$1" == "clear" ]]; then
+    unset AWS_PROFILE
+    unset AWS_SDK_LOAD_CONFIG
+  else
+    export AWS_PROFILE="$1"
+    export AWS_SDK_LOAD_CONFIG=1
+  fi
+}
+
 cvrgo () {
 	t=$(mktemp)
 	go test -coverprofile=$t $@ && go tool cover -func=$t && unlink $t
@@ -68,7 +78,14 @@ rmqq() {
     qq
 }
 
-eval "$(starship init zsh)"
+export GOPRIVATE=*.apple.com
+export GOPATH=$HOME/go
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+export PATH=$HOME/.cargo/bin:$GOPATH/bin:/usr/local/bin:/usr/local/opt/python@3.9/libexec/bin:/usr/local/opt/openssl@1.1/bin:$PATH
+. "$HOME/.cargo/env"
+
+[[ :$PATH: == *:$HOME/bin:* ]] || PATH=$HOME/bin:$PATH
+
+eval "$(starship init zsh)"

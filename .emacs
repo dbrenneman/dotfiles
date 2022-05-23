@@ -97,7 +97,8 @@
    delete-old-versions t
    kept-new-versions 6
    kept-old-versions 2
-   version-control t)       ; use versioned backups
+   version-control t
+   )       ; use versioned backups
 
 ;; Keybindings
 ;;
@@ -304,9 +305,17 @@
   :custom
   (lsp-auto-guess-root t)
   (lsp-register-custom-settings
-   '(("gopls.completeUnimported" t t)
+   '(
+     ("gopls.completeUnimported" t t)
      ("gopls.deepCompletion" t t)
-     ("gopls.staticcheck" t t))
+     ("gopls.staticcheck" t t)
+     ("gopls.analyses"
+       '(
+	 ("fieldalignment" t)
+	 ("shadow" t)
+	 )
+       )
+     )
    )
   (lsp-register-client
   (make-lsp-client :new-connection (lsp-stdio-connection '("/usr/local/bin/terraform-ls" "serve"))
@@ -367,11 +376,6 @@
 
 (diminish 'yas-minor-mode)
 
-(add-hook 'git-commit-mode
-          (lambda ()
-            (when (derived-mode-p 'text-mode)
-              (yas-activate-extra-mode 'text-mode+git-commit-mode))))
-
 ;;; Golang config ;;;
 (use-package go-mode
   :ensure t
@@ -415,4 +419,5 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(exec-path-from-shell use-package terraform-mode json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme go-mode magit git-gutter projectile switch-buffer-functions multiple-cursors company lsp-ui lsp-mode highlight-indent-guides fill-column-indicator yasnippet-snippets yasnippet flycheck diminish)))
+   (quote
+    (exec-path-from-shell use-package terraform-mode json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme go-mode magit git-gutter projectile switch-buffer-functions multiple-cursors company lsp-ui lsp-mode highlight-indent-guides fill-column-indicator yasnippet-snippets yasnippet flycheck diminish))))
