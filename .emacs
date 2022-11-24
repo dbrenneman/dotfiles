@@ -165,6 +165,7 @@
 	highlight-indent-guides
 	magit                   ;; Git client.
 	marginalia
+	orderless
 	project
 	rustic
 	selectrum
@@ -372,6 +373,13 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 ;;;;
+
+;;; Orderless
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;; EGLOT Language Server Interface
 (require 'go-mode)
