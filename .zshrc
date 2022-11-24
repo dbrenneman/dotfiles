@@ -28,7 +28,6 @@ setopt    incappendhistory  #Immediately append to the history file, not just wh
 # kubectl autocomplete
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 
-alias editor="/Applications/Emacs.app/Contents/MacOS/bin/emacs"
 alias edit="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n"
 
 
@@ -77,15 +76,5 @@ rmqq() {
     fi
     qq
 }
-
-export GOPRIVATE=*.apple.com
-export GOPATH=$HOME/go
-export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
-export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
-export PATH=$HOME/.cargo/bin:$GOPATH/bin:/usr/local/bin:/usr/local/opt/python@3.9/libexec/bin:/usr/local/opt/openssl@1.1/bin:$PATH
-. "$HOME/.cargo/env"
-
-[[ :$PATH: == *:$HOME/bin:* ]] || PATH=$HOME/bin:$PATH
 
 eval "$(starship init zsh)"
