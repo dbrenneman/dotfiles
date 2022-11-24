@@ -152,26 +152,29 @@
 (setq package-list
       '(
         ;;; General. ;;;
-	diminish
-	flycheck                ;; Linter.
-        yasnippet               ;; Snippet management.
-	yasnippet-snippets
-	whitespace
-	fill-column-indicator
-	highlight-indent-guides
-	lsp-mode                ;; Language Server Protocol Support
-	lsp-ui
+	ag
 	company
-        multiple-cursors        ;; Multi cursor.
-        switch-buffer-functions ;; Add hook when switchin buffers.
-	projectile
+	consult
+	diminish
+	eglot
+	embark
+	embark-consult
+	fill-column-indicator
+	flycheck                ;; Linter.
 	git-gutter              ;; Display / manage git changes.
+	highlight-indent-guides
 	magit                   ;; Git client.
+	marginalia
+	project
+	rustic
 	selectrum
 	selectrum-prescient
+	whitespace
+	yasnippet-snippets
         go-mode                 ;; Go major mode.
-	ag
-	;;flycheck-golangci-lint
+        multiple-cursors        ;; Multi cursor.
+        switch-buffer-functions ;; Add hook when switchin buffers.
+        yasnippet               ;; Snippet management.
 
         ;;; Themes. ;;;
         monokai-theme
@@ -242,6 +245,8 @@
 ;; Default to dark theme.
 (dark-theme)
 
+(setq eldoc-echo-area-use-multiline-p nil)
+
 (selectrum-mode +1)
 (selectrum-prescient-mode +1)
 (prescient-persist-mode +1)
@@ -264,11 +269,17 @@
 (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
 (global-fci-mode 1)
 
-;;; Projectile ;;;
-(projectile-mode +1)
-(diminish 'projectile-mode)
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+;; Project
+(require 'project)
+
+(defun project-find-go-module (dir)
+  (when-let ((root (locate-dominating-file dir "go.mod")))
+    (cons 'go-module root)))
+
+(cl-defmethod project-root ((project (head go-module)))
+  (cdr project))
+
+(add-hook 'project-find-functions #'project-find-go-module)
 
 ;;; Git gutter config. ;;;
 (global-git-gutter-mode +1)
@@ -293,56 +304,7 @@
 (setq flycheck-idle-buffer-switch-delay 10)
 (setq flycheck-idle-change-delay 10)
 
-
-;;; LSP ;;;
-(use-package lsp-mode
-  :ensure t
-  :commands (lsp lsp-deferred)
-  :hook (go-mode . lsp-deferred)
-  :config (progn
-           ;; use flycheck, not flymake
-           (setq lsp-prefer-flymake nil))
-  :custom
-  (lsp-auto-guess-root t)
-  (lsp-register-custom-settings
-   '(
-     ("gopls.completeUnimported" t t)
-     ("gopls.deepCompletion" t t)
-     ("gopls.staticcheck" t t)
-     ("gopls.analyses"
-       '(
-	 ("fieldalignment" t)
-	 ("shadow" t)
-	 )
-       )
-     )
-   )
-  (lsp-register-client
-  (make-lsp-client :new-connection (lsp-stdio-connection '("/usr/local/bin/terraform-ls" "serve"))
-                   :major-modes '(terraform-mode)
-                   :server-id 'terraform-ls))
-
-  (add-hook 'terraform-mode-hook #'lsp)
-
-)
-(setq lsp-eldoc-render-all t)
-
-;; Set up before-save hooks to format buffer and add/delete imports.
-;; Make sure you don't have other gofmt/goimports hooks enabled.
-(defun lsp-go-install-save-hooks ()
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-organize-imports t t))
-(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
-
-;; Optional - provides fancier overlays.
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode)
-
-(setq lsp-ui-doc-enable nil
-      lsp-ui-flycheck-enable t)
-
-;; Company mode is a standard completion package that works well with lsp-mode.
+;; Company mode is a standard completion package.
 (use-package company
   :ensure t
   :config
@@ -376,6 +338,63 @@
 
 (diminish 'yas-minor-mode)
 
+
+;; Marginalia/Embark
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
+
+(use-package embark
+  :ensure t
+
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t ; only need to install it, embark loads it after consult if found
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+;;;;
+
+;; EGLOT Language Server Interface
+(require 'go-mode)
+(require 'eglot)
+(add-hook 'go-mode-hook 'eglot-ensure)
+
+(setq-default eglot-workspace-configuration
+    '((:gopls .
+        ((staticcheck . t)
+         (matcher . "CaseSensitive")))))
+
+(defun eglot-organize-imports ()
+    (call-interactively 'eglot-code-action-organize-imports))
+  (defun before-saving-go ()
+    (add-hook 'before-save-hook #'eglot-format-buffer -10 t)
+    (add-hook 'before-save-hook #'eglot-organize-imports nil t))
+(add-hook 'go-mode-hook #'before-saving-go)
+
+(setq-default eglot-workspace-configuration
+    '((:gopls .
+        ((staticcheck . t)
+         (matcher . "CaseSensitive")))))
+
 ;;; Golang config ;;;
 (use-package go-mode
   :ensure t
@@ -393,6 +412,21 @@
     ))
 
 ;;; End of Golang config ;;
+
+;;; Rust config
+;; Enhanced Rust mode with automatic LSP support.
+(use-package rustic
+  :config
+  (setq
+   ;; eglot seems to be the best option right now.
+   rustic-lsp-client 'eglot
+   rustic-format-on-save nil
+   ;; Prevent automatic syntax checking, which was causing lags and stutters.
+   eglot-send-changes-idle-time (* 60 60)
+   )
+  ;; Disable the annoying doc popups in the minibuffer.
+  ;;(add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1)))
+  )
 
 ;;; Markdown Spello Prevention ;;;
 (dolist (hook '(text-mode-hook))
@@ -419,5 +453,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   (quote
-    (exec-path-from-shell use-package terraform-mode json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme go-mode magit git-gutter projectile switch-buffer-functions multiple-cursors company lsp-ui lsp-mode highlight-indent-guides fill-column-indicator yasnippet-snippets yasnippet flycheck diminish))))
+   '(rustic eglot exec-path-from-shell use-package terraform-mode json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme go-mode magit git-gutter projectile switch-buffer-functions multiple-cursors company lsp-ui lsp-mode highlight-indent-guides fill-column-indicator yasnippet-snippets yasnippet flycheck diminish)))
