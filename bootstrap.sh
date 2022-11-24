@@ -1,17 +1,13 @@
 #!/bin/bash
 
-# Brew install git go wireshark docker virtualbox vagrant emacs
-# git clone powerline
 # install dotfile links
 
 cd "$(dirname "$0")"
-git pull
+
 function doIt() {
-	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" --exclude "README.md" -av . ~
-    # Install zsh
-    cd
-    git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
+    rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" --exclude "gotools.sh" --exclude ".gitignore" --exclude "README.md" -av . ~
 }
+
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
 	doIt
 else
@@ -22,4 +18,5 @@ else
 	fi
 fi
 unset doIt
-source ~/.bash_profile
+source ~/.zshenv
+source ~/.zshrc
