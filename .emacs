@@ -152,31 +152,26 @@
 (setq package-list
       '(
         ;;; General. ;;;
-	ag
-	company
-	consult
 	diminish
-	embark
-	embark-consult
-	fill-column-indicator
 	flycheck                ;; Linter.
-	git-gutter              ;; Display / manage git changes.
-	highlight-indent-guides
-	lsp-mode
-	magit                   ;; Git client.
-	marginalia
-	orderless
-	project
-	rust-playground
-	rustic
-	toml-mode
-	vertico
-	whitespace
+        yasnippet               ;; Snippet management.
 	yasnippet-snippets
-        go-mode                 ;; Go major mode.
+	whitespace
+	fill-column-indicator
+	highlight-indent-guides
+	lsp-mode                ;; Language Server Protocol Support
+	lsp-ui
+	company
         multiple-cursors        ;; Multi cursor.
         switch-buffer-functions ;; Add hook when switchin buffers.
-        yasnippet               ;; Snippet management.
+	projectile
+	git-gutter              ;; Display / manage git changes.
+	magit                   ;; Git client.
+	vertico
+	savehist
+	orderless
+	go-mode                 ;; Go major mode.
+	ag
 
         ;;; Themes. ;;;
         monokai-theme
@@ -190,6 +185,7 @@
 	yaml-mode
         json-mode
 	terraform-mode
+	toml-mode
 
 	use-package
 ))
@@ -247,19 +243,19 @@
 ;; Default to dark theme.
 (dark-theme)
 
-;;(setq eldoc-echo-area-use-multiline-p nil)
+;; Enable vertico
+(use-package vertico
+  :init
+  (vertico-mode)
+  )
 
-;; Spell check code buffers
-(add-hook 'prog-mode-hook
-    (lambda ()
-    (flyspell-prog-mode)
-    ))
-
-;; Spell check text buffers
-(add-hook 'text-mode-hook
-    (lambda ()
-    (flyspell-mode)
-    ))
+;; Use the `orderless' completion style.
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion))))
+  )
 
 (require 'diminish)
 
@@ -278,6 +274,12 @@
 (require 'fill-column-indicator)
 (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
 (global-fci-mode 1)
+
+;;; Projectile ;;;
+(projectile-mode +1)
+(diminish 'projectile-mode)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
 ;;; Git gutter config. ;;;
 (global-git-gutter-mode +1)
@@ -302,214 +304,89 @@
 (setq flycheck-idle-buffer-switch-delay 10)
 (setq flycheck-idle-change-delay 10)
 
-;; Enable vertico
-(use-package vertico
-  :init
-  (vertico-mode)
- )
 
-;; Persist history over Emacs restarts. Vertico sorts by history position.
-(use-package savehist
-  :init
-  (savehist-mode))
-
-;; A few more useful configurations...
-(use-package emacs
-  :init
-  ;; Add prompt indicator to `completing-read-multiple'.
-  ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
-  (defun crm-indicator (args)
-    (cons (format "[CRM%s] %s"
-                  (replace-regexp-in-string
-                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                   crm-separator)
-                  (car args))
-          (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
-  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  ;; (setq read-extended-command-predicate
-  ;;       #'command-completion-default-include-p)
-
-  ;; Enable recursive minibuffers
-  (setq enable-recursive-minibuffers t))
-
-;;; Orderless
-(use-package orderless
-  :init
-  ;; Configure a custom style dispatcher (see the Consult wiki)
-  ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
-  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
-
-;;; Rust
-(use-package rustic
-  :ensure
-  :bind (:map rustic-mode-map
-              ("M-j" . lsp-ui-imenu)
-              ("M-?" . lsp-find-references)
-              ("C-c C-c l" . flycheck-list-errors)
-              ("C-c C-c a" . lsp-execute-code-action)
-              ("C-c C-c r" . lsp-rename)
-              ("C-c C-c q" . lsp-workspace-restart)
-              ("C-c C-c Q" . lsp-workspace-shutdown)
-              ("C-c C-c s" . lsp-rust-analyzer-status)
-              ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
-              ("C-c C-c d" . dap-hydra)
-              ("C-c C-c h" . lsp-ui-doc-glance))
-  :config
-  ;; comment to disable rustfmt on save
-  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
-
-(defun rk/rustic-mode-hook ()
-  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
-  ;; save rust buffers that are not file visiting. Once
-  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
-  ;; no longer be necessary.
-  (when buffer-file-name
-    (setq-local buffer-save-without-query t))
-  (add-hook 'before-save-hook 'lsp-format-buffer nil t))
-
-;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-;; for rust-analyzer integration
+;;; LSP ;;;
 (use-package lsp-mode
-  :ensure
-  :commands lsp
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :hook (go-mode . lsp-deferred)
+  :config (progn
+           ;; use flycheck, not flymake
+           (setq lsp-prefer-flymake nil))
   :custom
-  ;; what to use when checking on-save. "check" is default, I prefer clippy
-  (lsp-rust-analyzer-cargo-watch-command "clippy")
-  (lsp-eldoc-render-all t)
-  (lsp-idle-delay 0.6)
-  ;; This controls the overlays that display type and other hints inline. Enable
-  ;; / disable as you prefer. Well require a `lsp-workspace-restart' to have an
-  ;; effect on open projects.
-  (lsp-rust-analyzer-server-display-inlay-hints t)
-  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
-  (lsp-rust-analyzer-display-chaining-hints t)
-  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
-  (lsp-rust-analyzer-display-closure-return-type-hints t)
-  (lsp-rust-analyzer-display-parameter-hints nil)
-  (lsp-rust-analyzer-display-reborrow-hints nil)
-
+  (lsp-auto-guess-root t)
   (lsp-register-custom-settings
-   '(("gopls.completeUnimported" t t)
-     ("gopls.staticcheck" t t)))
-  
-  :config
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+   '(
+     ("gopls.completeUnimported" t t)
+     ("gopls.deepCompletion" t t)
+     ("gopls.staticcheck" t t)
+     ("gopls.analyses"
+       '(
+	 ("fieldalignment" t)
+	 ("shadow" t)
+	 )
+       )
+     )
+   )
+  (lsp-register-client
+  (make-lsp-client :new-connection (lsp-stdio-connection '("/usr/local/bin/terraform-ls" "serve"))
+                   :major-modes '(terraform-mode)
+                   :server-id 'terraform-ls))
 
+  (add-hook 'terraform-mode-hook #'lsp)
+
+)
+(setq lsp-eldoc-render-all t)
+
+;; Set up before-save hooks to format buffer and add/delete imports.
+;; Make sure you don't have other gofmt/goimports hooks enabled.
+(defun lsp-go-install-save-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+
+;; Optional - provides fancier overlays.
 (use-package lsp-ui
-  :ensure
-  :commands lsp-ui-mode
-  :custom
-  (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover t)
-  (lsp-ui-doc-enable nil))
+  :ensure t
+  :commands lsp-ui-mode)
 
+(setq lsp-ui-doc-enable nil
+      lsp-ui-flycheck-enable t)
 
-;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-;; inline errors
-(use-package flycheck :ensure)
-
-;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-;; auto-completion and code snippets
-(use-package yasnippet
-  :ensure
+;; Company mode is a standard completion package that works well with lsp-mode.
+(use-package company
+  :ensure t
   :config
-  (yas-reload-all)
-  (add-hook 'prog-mode-hook 'yas-minor-mode)
-  (add-hook 'text-mode-hook 'yas-minor-mode))
+  ;; Optionally enable completion-as-you-type behavior.
+  (setq company-idle-delay 0.6)
+  (setq company-minimum-prefix-length 1)
+  (setq company-tooltip-align-annotations t)
+  )
+(add-hook 'after-init-hook 'global-company-mode)
+(diminish 'company-mode)
+
+(defvar-local company-fci-mode-on-p nil)
+
+(defun company-turn-off-fci (&rest ignore)
+  (when (boundp 'fci-mode)
+    (setq company-fci-mode-on-p fci-mode)
+    (when fci-mode (fci-mode -1))))
+
+(defun company-maybe-turn-on-fci (&rest ignore)
+  (when company-fci-mode-on-p (fci-mode 1)))
+
+(add-hook 'company-completion-started-hook 'company-turn-off-fci)
+(add-hook 'company-completion-finished-hook 'company-maybe-turn-on-fci)
+(add-hook 'company-completion-cancelled-hook 'company-maybe-turn-on-fci)
+
+;;; Snippets ;;;
+(use-package yasnippet
+  :ensure t
+  :commands yas-minor-mode
+  :hook (go-mode . yas-minor-mode)
+  )
 
 (diminish 'yas-minor-mode)
-
-(use-package company
-  :ensure
-  :bind
-  (:map company-active-map
-              ("C-n". company-select-next)
-              ("C-p". company-select-previous)
-              ("M-<". company-select-first)
-              ("M->". company-select-last))
-  (:map company-mode-map
-        ("<tab>". tab-indent-or-complete)
-        ("TAB". tab-indent-or-complete)))
-
-(defun company-yasnippet-or-completion ()
-  (interactive)
-  (or (do-yas-expand)
-      (company-complete-common)))
-
-(defun check-expansion ()
-  (save-excursion
-    (if (looking-at "\\_>") t
-      (backward-char 1)
-      (if (looking-at "\\.") t
-        (backward-char 1)
-        (if (looking-at "::") t nil)))))
-
-(defun do-yas-expand ()
-  (let ((yas/fallback-behavior 'return-nil))
-    (yas/expand)))
-
-(defun tab-indent-or-complete ()
-  (interactive)
-  (if (minibufferp)
-      (minibuffer-complete)
-    (if (or (not yas/minor-mode)
-            (null (do-yas-expand)))
-        (if (check-expansion)
-            (company-complete-common)
-          (indent-for-tab-command)))))
-
-;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-;; Create / cleanup rust scratch projects quickly
-(use-package rust-playground :ensure)
-
-;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-;; for Cargo.toml and other config files
-(use-package toml-mode :ensure)
-
-;; Marginalia/Embark
-(use-package marginalia
-  :ensure t
-  :config
-  (marginalia-mode))
-
-(use-package embark
-  :ensure t
-
-  :bind
-  (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
-   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
-
-  :init
-
-  ;; Optionally replace the key help with a completing-read interface
-  (setq prefix-help-command #'embark-prefix-help-command)
-
-  :config
-
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-
-;; Consult users will also want the embark-consult package.
-(use-package embark-consult
-  :ensure t ; only need to install it, embark loads it after consult if found
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
-;;;;
 
 ;;; Golang config ;;;
 (use-package go-mode
@@ -522,18 +399,19 @@
   (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
 )
 
-;; Set up before-save hooks to format buffer and add/delete imports.
-;; Make sure you don't have other gofmt/goimports hooks enabled.
-(defun lsp-go-install-save-hooks ()
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-organize-imports t t))
-(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
-
 ;;; End of Golang config ;;
 
-;;; Markdown Spello Prevention ;;;
-(dolist (hook '(text-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1))))
+;; Spell check code buffers
+(add-hook 'prog-mode-hook
+    (lambda ()
+    (flyspell-prog-mode)
+    ))
+
+;; Spell check text buffers
+(add-hook 'text-mode-hook
+    (lambda ()
+    (flyspell-mode)
+    ))
 ;;;
 
 (custom-set-faces
@@ -550,10 +428,3 @@
 ;;; .emacs ends here
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(lsp-ui exec-path-from-shell use-package terraform-mode json-mode yaml-mode protobuf-mode dockerfile-mode powerline solarized-theme monokai-theme switch-buffer-functions multiple-cursors go-mode yasnippet-snippets vertico toml-mode rustic rust-playground orderless marginalia magit lsp-mode highlight-indent-guides git-gutter flycheck fill-column-indicator embark-consult embark diminish consult company ag)))
