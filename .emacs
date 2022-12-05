@@ -209,7 +209,7 @@
   :ensure t
   :if (memq window-system '(mac ns x))
   :config
-  (setq exec-path-from-shell-variables '("PATH" "GOPATH"))
+  (setq exec-path-from-shell-variables '("PATH" "GOPATH" "GOPRIVATE" "EDITOR" "PAGER"))
   (exec-path-from-shell-initialize))
 
 ;;; Load & configure themes. ;;;
@@ -338,13 +338,6 @@
 )
 (setq lsp-eldoc-render-all t)
 
-;; Set up before-save hooks to format buffer and add/delete imports.
-;; Make sure you don't have other gofmt/goimports hooks enabled.
-(defun lsp-go-install-save-hooks ()
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-organize-imports t t))
-(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
-
 ;; Optional - provides fancier overlays.
 (use-package lsp-ui
   :ensure t
@@ -393,11 +386,16 @@
   :ensure t
   :mode "\\.go\\'"
   :config
-  (setenv "GO111MODULE" "on")
-  (setenv "GOPRIVATE" "*.apple.com")
-  (setenv "GOFLAGS" "-mod=vendor")
   (add-hook 'go-mode-hook 'highlight-indent-guides-mode)
-)
+
+  :bind (
+         ("C-c C-j" . lsp-find-definition)
+         ("C-c C-d" . lsp-describe-thing-at-point)
+         )
+  :hook ((go-mode . lsp-deferred)
+         (before-save . lsp-format-buffer)
+         (before-save . lsp-organize-imports))
+  )
 
 ;;; End of Golang config ;;
 
@@ -426,5 +424,3 @@
 
 (provide '.emacs)
 ;;; .emacs ends here
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
