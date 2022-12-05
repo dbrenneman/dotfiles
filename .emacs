@@ -168,6 +168,7 @@
 	git-gutter              ;; Display / manage git changes.
 	magit                   ;; Git client.
 	vertico
+	marginalia
 	savehist
 	orderless
 	go-mode                 ;; Go major mode.
@@ -256,6 +257,20 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion))))
   )
+
+;; Enable rich annotations using the Marginalia package
+(use-package marginalia
+  ;; Either bind `marginalia-cycle' globally or only in the minibuffer
+  :bind (("M-A" . marginalia-cycle)
+         :map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init configuration is always executed (Not lazy!)
+  :init
+
+  ;; Must be in the :init section of use-package such that the mode gets
+  ;; enabled right away. Note that this forces loading the package.
+  (marginalia-mode))
 
 (require 'diminish)
 
@@ -424,3 +439,10 @@
 
 (provide '.emacs)
 ;;; .emacs ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(marginalia yasnippet-snippets yaml-mode vertico use-package toml-mode terraform-mode switch-buffer-functions solarized-theme protobuf-mode projectile powerline orderless multiple-cursors monokai-theme magit lsp-ui json-mode highlight-indent-guides go-mode git-gutter flycheck fill-column-indicator exec-path-from-shell dockerfile-mode diminish company ag)))
