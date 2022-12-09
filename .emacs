@@ -169,6 +169,8 @@
 	magit                   ;; Git client.
 	vertico
 	marginalia
+	rust-playground
+	rustic
 	savehist
 	orderless
 	go-mode                 ;; Go major mode.
@@ -258,6 +260,11 @@
         completion-category-overrides '((file (styles partial-completion))))
   )
 
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
 ;; Enable rich annotations using the Marginalia package
 (use-package marginalia
   ;; Either bind `marginalia-cycle' globally or only in the minibuffer
@@ -330,6 +337,8 @@
            (setq lsp-prefer-flymake nil))
   :custom
   (lsp-auto-guess-root t)
+
+  ;; lsp golang/gopls config
   (lsp-register-custom-settings
    '(
      ("gopls.completeUnimported" t t)
@@ -343,15 +352,30 @@
        )
      )
    )
+  ;;
+
+  ;; lsp Rust configuration
+  (lsp-rust-analyzer-cargo-watch-command "clippy")
+  (lsp-eldoc-render-all t)
+  (lsp-idle-delay 0.6)
+  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (lsp-rust-analyzer-display-chaining-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+  (lsp-rust-analyzer-display-closure-return-type-hints t)
+  (lsp-rust-analyzer-display-parameter-hints nil)
+  (lsp-rust-analyzer-display-reborrow-hints nil)
+  ;;
+
+  ;; lsp Terraform config
   (lsp-register-client
   (make-lsp-client :new-connection (lsp-stdio-connection '("/usr/local/bin/terraform-ls" "serve"))
                    :major-modes '(terraform-mode)
                    :server-id 'terraform-ls))
 
   (add-hook 'terraform-mode-hook #'lsp)
-
-)
-(setq lsp-eldoc-render-all t)
+  ;;
+  )
 
 ;; Optional - provides fancier overlays.
 (use-package lsp-ui
@@ -414,6 +438,37 @@
 
 ;;; End of Golang config ;;
 
+;;; Rust
+(use-package rustic
+  :ensure
+  :bind (:map rustic-mode-map
+              ("M-j" . lsp-ui-imenu)
+              ("M-?" . lsp-find-references)
+              ("C-c C-c l" . flycheck-list-errors)
+              ("C-c C-c a" . lsp-execute-code-action)
+              ("C-c C-c r" . lsp-rename)
+              ("C-c C-c q" . lsp-workspace-restart)
+              ("C-c C-c Q" . lsp-workspace-shutdown)
+              ("C-c C-c s" . lsp-rust-analyzer-status)
+              ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
+              ("C-c C-c d" . dap-hydra)
+              ("C-c C-c h" . lsp-ui-doc-glance))
+  :config
+  ;; comment to disable rustfmt on save
+  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+(defun rk/rustic-mode-hook ()
+  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
+  ;; save rust buffers that are not file visiting. Once
+  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
+  ;; no longer be necessary.
+  (when buffer-file-name
+    (setq-local buffer-save-without-query t))
+  (add-hook 'before-save-hook 'lsp-format-buffer nil t))
+
+;;; End of Rust config
+
+
 ;; Spell check code buffers
 (add-hook 'prog-mode-hook
     (lambda ()
@@ -439,10 +494,3 @@
 
 (provide '.emacs)
 ;;; .emacs ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(marginalia yasnippet-snippets yaml-mode vertico use-package toml-mode terraform-mode switch-buffer-functions solarized-theme protobuf-mode projectile powerline orderless multiple-cursors monokai-theme magit lsp-ui json-mode highlight-indent-guides go-mode git-gutter flycheck fill-column-indicator exec-path-from-shell dockerfile-mode diminish company ag)))
