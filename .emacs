@@ -169,10 +169,10 @@
 	magit                   ;; Git client.
 	vertico
 	marginalia
+	orderless
 	rust-playground
 	rustic
 	savehist
-	orderless
 	go-mode                 ;; Go major mode.
 	ag
 
@@ -254,10 +254,9 @@
 
 ;; Use the `orderless' completion style.
 (use-package orderless
-  :init
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))))
+  :init (icomplete-mode)
+  (setq completion-styles '(orderless orderless-literal orderless-flex basic)
+        completion-category-overrides '((file (styles basic partial-completion))))
   )
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
