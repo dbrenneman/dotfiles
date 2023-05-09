@@ -28,8 +28,8 @@ setopt    incappendhistory  #Immediately append to the history file, not just wh
 # kubectl autocomplete
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 
-alias edit="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n"
-
+alias edit="/opt/homebrew/bin/emacsclient -n"
+alias e="/opt/homebrew/bin/emacsclient -n"
 
 aws-profile() {
   if [[ "$1" == "clear" ]]; then
