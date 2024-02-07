@@ -55,18 +55,63 @@
     (exec-path-from-shell-initialize)))
 
 (use-package doom-themes
-  ;;:init (load-theme 'doom-xcode t))
-  ;;:init (load-theme 'doom-palenight t))
-  :init (load-theme 'doom-one t))
+  :init (load-theme 'doom-dracula t))
 
 (use-package all-the-icons
-  :if (display-graphic-p)
-  :config (interactive) (all-the-icons-install-fonts t))
+  :ensure t)
+  ;; :if (display-graphic-p)
+  ;; :config (interactive) (all-the-icons-install-fonts t))
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
 
+(use-package smartparens-mode
+  :ensure smartparens  ;; install the package
+  :hook (prog-mode text-mode markdown-mode) ;; add `smartparens-mode` to these hooks
+  :config
+  ;; load default config
+  (require 'smartparens-config))
+
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
+(use-package marginalia
+  :ensure t
+  :custom
+  (marginalia-max-relative-age 0)
+  (marginalia-align 'right)
+  :init
+  (marginalia-mode))
+
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless basic orderless-initialism orderless-flex)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package corfu
+  ;; TAB-and-Go customizations
+  :init
+  (corfu-history-mode)
+  (global-corfu-mode)
+  :custom
+  (corfu-cycle t)           ;; Enable cycling for `corfu-next/previous'
+  (corfu-preselect 'prompt) ;; Always preselect the prompt
+  (corfu-auto t)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.0)
+  ;; Use TAB for cycling, default is `corfu-complete'.
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ([backtab] . corfu-previous))
+  )
+  
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
@@ -90,15 +135,6 @@
   :config
   (counsel-mode 1))
 
-;;; Snippets ;;;
-(use-package yasnippet
-  :ensure t
-  :custom (yas-global-mode 1))
-
-(use-package yasnippet-snippets
-  :ensure t
-  :after yasnippet)
-
 ;; Spell check code buffers
 (add-hook 'prog-mode-hook
     (lambda ()
@@ -111,47 +147,26 @@
     (flyspell-mode)
     ))
 
-(use-package flycheck
-  :ensure t
-  :diminish
-  (global-flycheck-mode))
-
-(use-package lsp-mode
-  :ensure t
-  :commands (lsp lsp-deferred)
-  :init
-  (setq lsp-keymap-prefix "s-l")
+(use-package treesit-auto
   :custom
-  (lsp-enable-which-key-integration t)
-  (lsp-auto-guess-root t)
-  (lsp-treemacs-sync-mode 1)
-  )
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
-(use-package lsp-ui
+(use-package eglot
+  :ensure t)
+
+;;; Snippets ;;;
+(use-package yasnippet
   :ensure t
-  :hook (lsp-mode . lsp-ui-mode))
-  ;; :custom
-  ;; (lsp-ui-doc-position 'bottom))
+  :config
+  (setq company-backends '((company-capf company-yasnippet)))
+  :custom (yas-global-mode 1))
 
-(use-package lsp-treemacs
+(use-package yasnippet-snippets
   :ensure t
-  :after lsp)
-
-(use-package lsp-ivy
-  :ensure t
-  :after lsp)
-
-(use-package company
-      :after lsp-mode
-      :hook (lsp-mode . company-mode)
-      :bind
-      (:map company-active-map
-            ("<tab>" . company-complete-selection))
-      (:map lsp-mode-map
-            ("<tab>" . company-indent-or-complete-common))
-      :custom
-      (company-minimum-prefix-length 1)
-      (company-idle-delay 0.0))
+  :after yasnippet)
 
 (use-package magit
   :ensure t
@@ -168,23 +183,29 @@
   :ensure t)
 
 ;;; Golang config ;;;
-(use-package go-mode
+(use-package go-ts-mode
   :ensure t
   :mode "\\.go\\'"
-  :hook ((go-mode . lsp-deferred)
-         (before-save . lsp-format-buffer)
-         (before-save . lsp-organize-imports))
-  :custom
-  (lsp-register-custom-settings
-   '(("gopls.completeUnimported" t t)
-     ("gopls.staticcheck" t t))))
+  :init (defun own/eglot-organize-imports ()
+	  (call-interactively 'eglot-code-action-organize-imports))
+  :hook (go-ts-mode . eglot-ensure)
+  :hook (before-save . eglot-format-buffer)
+  :hook (before-save . own/eglot-organize-imports))
 
 ;;; Rust config ;;;
 (use-package rustic
-  :ensure t)
+  :ensure t
+  :hook (rust-ts-mode . eglot-ensure)
+  :init (setq rustic-lsp-client 'eglot)
+  :config (setq rustic-format-trigger 'on-save))
 
 (use-package protobuf-mode
   :ensure t)
+
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown"))
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
@@ -194,10 +215,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(doom-modeline ivy)))
+ '(package-selected-packages '(flycheck tree-sitter-langs doom-modeline ivy)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(provide 'init.el)
+;;; init.el ends here
