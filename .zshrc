@@ -1,68 +1,66 @@
-# Prefer US English and use UTF-8
+# Locale
 export LC_ALL="en_US.UTF-8"
-export LANG="en_US"
+export LANG="en_US.UTF-8"
 
-setopt appendhistory beep extendedglob nomatch notify
-bindkey -e
+CASE_SENSITIVE="true"
+export EDITOR="hx"
 
-zstyle :compinstall filename '/Users/dbrenneman/.zshrc'
-
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+# Homebrew
+if [[ -f /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -f /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-autoload -Uz compinit
-compinit
+# fzf (Catppuccin Macchiato)
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
+--color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
+--color=marker:#b7bdf8,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796 \
+--color=selected-bg:#494d64 \
+--border=\"rounded\""
+source <(fzf --zsh)
 
-#############################################################################
-# History Configuration
-##############################################################################
-HISTSIZE=500000               #How many lines of history to keep in memory
-HISTFILE=~/.zsh_history     #Where to save history to disk
-SAVEHIST=1000000               #Number of history entries to save to disk
-HISTDUP=erase               #Erase duplicates in the history file
-setopt    appendhistory     #Append history to the history file (no overwriting)
-setopt    sharehistory      #Share history across terminals
-setopt    incappendhistory  #Immediately append to the history file, not just when a term is killed
+# Shell integrations
+eval "$(atuin init zsh)"
+eval "$(zoxide init zsh)"
+eval "$(direnv hook zsh)"
+eval "$(starship init zsh)"
 
-# kubectl autocomplete
-[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+# Completions
+if [[ -n "$HOMEBREW_PREFIX" ]]; then
+  FPATH="${HOMEBREW_PREFIX}/share/zsh-completions:$FPATH"
+fi
+autoload -Uz compinit && compinit
 
-alias edit="/opt/homebrew/bin/emacsclient -n"
-alias e="/opt/homebrew/bin/emacsclient -n"
+# History
+HISTSIZE=1000000000
+HISTFILE=~/.zsh_history
+SAVEHIST=1000000000
+HISTDUP=erase
+setopt appendhistory sharehistory incappendhistory extendedhistory
 
-aws-profile() {
-  if [[ "$1" == "clear" ]]; then
-    unset AWS_PROFILE
-    unset AWS_SDK_LOAD_CONFIG
-  else
-    export AWS_PROFILE="$1"
-    export AWS_SDK_LOAD_CONFIG=1
-  fi
-}
+# Java (macOS)
+if [[ -x /usr/libexec/java_home ]]; then
+  export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
+  [[ -n "$JAVA_HOME" ]] && export PATH="$JAVA_HOME/bin:$PATH"
+fi
 
-cvrgo () {
-	t=$(mktemp)
-	go test -coverprofile=$t $@ && go tool cover -func=$t && unlink $t
-}
+# PATH
+[[ -n "$HOMEBREW_PREFIX" && -d "${HOMEBREW_PREFIX}/opt/libpq/bin" ]] && export PATH="${HOMEBREW_PREFIX}/opt/libpq/bin:$PATH"
+[[ -n "$HOMEBREW_PREFIX" && -d "${HOMEBREW_PREFIX}/opt/gnu-tar/libexec/gnubin" ]] && export PATH="${HOMEBREW_PREFIX}/opt/gnu-tar/libexec/gnubin:$PATH"
+[[ :$PATH: == *:$HOME/bin:* ]] || PATH="$HOME/bin:$PATH"
 
-cvrgohtml () {
-	t=$(mktemp)
-	go test -covermode=count -coverprofile=$t $@ && go tool cover -func=$t && go tool cover -html=$t && unlink $t
-}
-
+# qq debug log viewer (Go's q package)
 qq() {
     clear
-
     logpath="$TMPDIR/q"
     if [[ -z "$TMPDIR" ]]; then
         logpath="/tmp/q"
     fi
-
     if [[ ! -f "$logpath" ]]; then
         echo 'Q LOG' > "$logpath"
     fi
-
     tail -100f -- "$logpath"
 }
 
@@ -77,4 +75,15 @@ rmqq() {
     qq
 }
 
-eval "$(starship init zsh)"
+# Modern aliases
+alias ls="eza"
+alias ll="eza -la --git --icons"
+alias tree="eza --tree"
+alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+
+# Machine-specific overrides (not tracked in dotfiles repo)
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+# Zsh plugins (must be sourced last)
+[[ -n "$HOMEBREW_PREFIX" ]] && source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/dev/null
+[[ -n "$HOMEBREW_PREFIX" ]] && source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2>/dev/null

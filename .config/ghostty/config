@@ -1,0 +1,6 @@
+font-family = "Source Code Pro"
+font-size = 14
+theme = "Catppuccin Mocha"
+background-opacity = 0.92
+macos-titlebar-style = "transparent"
+term = "xterm-256color"

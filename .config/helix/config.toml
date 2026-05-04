@@ -1,0 +1,77 @@
+theme = "tokyonight_moon"
+
+[editor]
+line-number = "relative"
+rulers = [120]
+mouse = true
+shell = ["zsh", "-c"]
+auto-completion = true
+completion-replace = true
+trim-trailing-whitespace = true
+end-of-line-diagnostics = "hint"
+color-modes = true
+#rainbow-brackets = true
+auto-format = true
+cursorline = true
+cursorcolumn = true
+gutters = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
+
+[editor.inline-diagnostics]
+cursor-line = "warning"
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.lsp]
+enable=true
+auto-signature-help=true
+display-messages = true
+display-signature-help-docs	= true
+
+[editor.file-picker]
+hidden = false
+
+[editor.whitespace]
+render = "all"
+
+[keys.normal]
+# Use system clipboard
+y = "yank_main_selection_to_clipboard"
+p = "paste_clipboard_before"
+
+[editor.soft-wrap]
+enable = false
+
+[editor.auto-save]
+focus-lost  = true
+after-delay.enable = true
+after-delay.timeout = 300000
+
+[editor.statusline]
+left = [
+  "mode",
+  "spinner",
+  "version-control",
+  "spacer",
+  "separator",
+  "file-name",
+  "read-only-indicator",
+  "file-modification-indicator",
+
+]
+center = []
+right = [
+  "diagnostics",
+  "workspace-diagnostics",
+  "position",
+  "total-line-numbers",
+  "position-percentage",
+  "file-encoding",
+  "file-line-ending",
+  "file-type",
+  "register",
+  "selections",
+]
+separator = "│"

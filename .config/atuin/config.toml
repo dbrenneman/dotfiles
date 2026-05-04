@@ -1,0 +1,59 @@
+# Atuin configuration
+
+# Compact style — less chrome, more history
+style = "compact"
+
+# Fuzzy search by default
+search_mode = "fuzzy"
+
+# Workspace filtering — show commands from this git repo by default
+workspaces = true
+filter_mode = "global"
+filter_mode_shell_up_key_binding = "workspace"
+
+# Up-arrow shows repo-scoped history, Ctrl-R shows global
+search_mode_shell_up_key_binding = "fuzzy"
+
+# Show preview of long commands
+show_preview = true
+max_preview_height = 4
+
+# Execute on enter, tab to edit
+enter_accept = true
+
+# Don't sync to cloud (keep history local)
+auto_sync = false
+update_check = false
+
+# Filter secrets from history
+secrets_filter = true
+
+# Catppuccin Macchiato theme
+[theme]
+name = "catppuccin-macchiato-mauve"
+
+# Track subcommands for stats (matches your toolchain)
+[stats]
+common_subcommands = [
+  "bazel",
+  "cargo",
+  "docker",
+  "git",
+  "go",
+  "kubectl",
+  "npm",
+  "pnpm",
+  "swift",
+  "brew",
+  "k9s",
+  "gh",
+  "pkl",
+  "ruff",
+]
+common_prefix = ["sudo"]
+
+[keys]
+scroll_exits = true
+
+[sync]
+records = true

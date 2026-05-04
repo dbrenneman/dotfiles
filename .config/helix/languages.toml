@@ -1,0 +1,80 @@
+[[language]]
+name = "go"
+formatter = { command = "goimports" }
+auto-format = true
+language-servers = ["gopls"]
+
+[[language]]
+name = "swift"
+auto-format = true
+language-servers = ["sourcekit-lsp"]
+
+[[language]]
+name = "python"
+language-servers = ["ruff", "pylsp"]
+formatter = { command = "ruff", args = ["format", "-"] }
+auto-format = true
+
+[[language]]
+name = "java"
+language-servers = ["jdtls"]
+auto-format = true
+
+[[language]]
+name = "javascript"
+language-servers = ["typescript-language-server"]
+formatter = { command = "prettier", args = ["--parser", "babel"] }
+auto-format = true
+
+[[language]]
+name = "typescript"
+language-servers = ["typescript-language-server"]
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+auto-format = true
+
+[[language]]
+name = "markdown"
+formatter = { command = "prettier", args = ["--parser", "markdown"] }
+auto-format = true
+language-servers = ["marksman"]
+
+[[language]]
+name = "pkl"
+language-servers = ["pkl-lsp"]
+auto-format = true
+
+[language-server.pkl-lsp]
+command = "pkl-lsp"
+
+[language-server.sourcekit-lsp]
+command = "xcrun"
+args = ["sourcekit-lsp"]
+config = { completion = { useCallbacks = true }, index-store-path = ".build/debug/index/store", index-database-path = ".build/debug/index/db" }
+
+[language-server.ruff]
+command = "ruff"
+args = ["server"]
+
+[language-server.jdtls]
+command = "jdtls"
+
+[language-server.marksman]
+command = "marksman"
+args = ["server"]
+
+[language-server.typos]
+command = "typos-lsp"
+environment = { "RUST_LOG" = "error" }
+config.diagnosticSeverity = "Warning"
+
+[language-server.gopls.config]
+gofumpt = true
+staticcheck = true
+semanticTokens = true
+verboseOutput = true
+analyses = { "nilness" = true, unusedparams = true, unusedwrite = true, useany = true, "shadow" = true, "simplifycompositelit" = true, "unreachable" = true, "unusedvariable" = true, "fillstruct" = true }
+usePlaceholders = true
+completeUnimported = true
+hints = { "assignVariableType" = true, "compositeLiteralFields" = true, "compositeLiteralTypes" = true, "constantValues" = true, "functionTypeParameters" = true, "parameterNames" = true, "rangeVariableTypes" = true }
+directoryFilters = ["-bazel-bin", "-bazel-out", "-bazel-testlogs", "-bazel-devicecompute", "-analytics", "-deployment", "-deploy", "-docker", "-docs", "-third-party", "-web"]
+codelenses = { gc_details = false, generate = false, regenerate_cgo = false, tidy = false, upgrade_dependency = false, vendor = false }

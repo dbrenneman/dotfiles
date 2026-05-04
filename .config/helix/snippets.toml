@@ -1,0 +1,215 @@
+[go]
+
+"func" = """
+func ${1:name}(${2:params}) ${3:returnType} {
+\t$0
+}
+"""
+
+"method" = """
+func (${1:recv} *${2:Type}) ${3:Name}(${4:params}) ${5:returnType} {
+\t$0
+}
+"""
+
+"iferr" = """
+if err != nil {
+\treturn ${1:nil}, err
+}
+"""
+
+"for" = """
+for ${1:i} := 0; ${1:i} < ${2:n}; ${1:i}++ {
+\t$0
+}
+"""
+
+"range" = """
+for ${1:k}, ${2:v} := range ${3:sliceOrMap} {
+\t$0
+}
+"""
+
+"struct" = """
+type ${1:Name} struct {
+\t${2:Field} ${3:type}
+}
+"""
+
+"interface" = """
+type ${1:Name} interface {
+\t${2:Method}(${3:params}) ${4:returnType}
+}
+"""
+
+"test" = """
+func Test${1:Name}(t *testing.T) {
+\t$0
+}
+"""
+
+"go" = """
+go func() {
+\t$0
+}()
+"""
+
+"defer" = """
+defer func() {
+\t$0
+}()
+"""
+
+[swift]
+
+"func" = """
+func ${1:name}(${2:params}) -> ${3:ReturnType} {
+\t$0
+}
+"""
+
+"guard" = """
+guard let ${1:value} = ${2:optional} else {
+\t$0
+\treturn
+}
+"""
+
+"iflet" = """
+if let ${1:value} = ${2:optional} {
+\t$0
+}
+"""
+
+"struct" = """
+struct ${1:Name} {
+\t${2:let property}: ${3:Type}
+}
+"""
+
+"class" = """
+class ${1:Name} {
+\t$0
+}
+"""
+
+"enum" = """
+enum ${1:Name} {
+\tcase ${2:value}
+}
+"""
+
+"closure" = """
+{ ${1:params} in
+\t$0
+}
+"""
+
+"test" = """
+@Test func ${1:name}() {
+\t$0
+}
+"""
+
+[python]
+
+"def" = """
+def ${1:name}(${2:params}) -> ${3:None}:
+\t$0
+"""
+
+"class" = """
+class ${1:Name}:
+\tdef __init__(self${2:, params}):
+\t\t$0
+"""
+
+"ifmain" = """
+if __name__ == "__main__":
+\t$0
+"""
+
+"with" = """
+with ${1:context_manager} as ${2:var}:
+\t$0
+"""
+
+"try" = """
+try:
+\t$0
+except ${1:Exception} as e:
+\traise
+"""
+
+"test" = """
+def test_${1:name}():
+\t$0
+"""
+
+[typescript]
+
+"func" = """
+function ${1:name}(${2:params}): ${3:void} {
+\t$0
+}
+"""
+
+"arrow" = """
+const ${1:name} = (${2:params}): ${3:void} => {
+\t$0
+}
+"""
+
+"interface" = """
+interface ${1:Name} {
+\t${2:property}: ${3:type}
+}
+"""
+
+"type" = """
+type ${1:Name} = {
+\t${2:property}: ${3:type}
+}
+"""
+
+"async" = """
+async function ${1:name}(${2:params}): Promise<${3:void}> {
+\t$0
+}
+"""
+
+"test" = """
+test("${1:description}", () => {
+\t$0
+})
+"""
+
+[pkl]
+
+"class" = """
+class ${1:Name} {
+\t${2:property}: ${3:Type}
+}
+"""
+
+"module" = """
+module ${1:name}
+
+$0
+"""
+
+"when" = """
+when (${1:condition}) {
+\t$0
+}
+"""
+
+"for" = """
+for (${1:item} in ${2:collection}) {
+\t$0
+}
+"""
+
+"typealias" = """
+typealias ${1:Name} = ${2:Type}
+"""
