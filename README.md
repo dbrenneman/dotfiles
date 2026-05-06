@@ -38,10 +38,13 @@ brew bundle --file=~/Brewfile
 git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 # After starting tmux, press Ctrl-T then I to install plugins
 
-# 8. Import existing shell history into atuin
+# 8. Configure macOS defaults (keyboard, dock, finder, etc.)
+./setup-macos.sh
+
+# 9. Import existing shell history into atuin
 atuin import zsh
 
-# 9. Restart shell
+# 10. Restart shell
 exec zsh
 ```
 
@@ -58,12 +61,13 @@ These files are NOT tracked in this repo. Create them locally as needed:
 | Path | Purpose |
 |------|---------|
 | `Brewfile` | Declarative package manifest — `brew bundle` installs everything |
+| `setup-macos.sh` | macOS defaults: fast key repeat, auto-hide dock, Finder tweaks |
 | `.zshrc` | Shell config: fzf, atuin, zoxide, direnv, starship, eza aliases |
 | `.gitconfig` | Git aliases, delta pager, Catppuccin theme, auto-setup remote |
 | `.config/helix/` | Editor config, language servers, snippets (Go, Swift, Python, TS, PKL, Java) |
 | `.config/lazygit/config.yml` | Lazygit with Catppuccin Macchiato theme |
 | `.config/starship.toml` | Prompt: Catppuccin Macchiato, language versions, k8s context |
-| `.config/ghostty/config` | Terminal: Catppuccin Mocha, Source Code Pro, transparency |
+| `.config/ghostty/config` | Terminal: Catppuccin Mocha, Monaspace Neon, transparency |
 | `.config/bat/config` | Catppuccin syntax highlighting theme |
 | `.config/atuin/` | Shell history config and Catppuccin theme |
 | `.config/tmux/tmux.conf` | Tmux: Ctrl-T prefix, catppuccin, vim-style panes |
