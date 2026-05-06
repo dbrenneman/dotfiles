@@ -2,33 +2,34 @@
 name = "go"
 formatter = { command = "goimports" }
 auto-format = true
-language-servers = ["gopls"]
+language-servers = ["gopls", "typos"]
 
 [[language]]
 name = "swift"
 auto-format = true
-language-servers = ["sourcekit-lsp"]
+formatter = { command = "swift-format" }
+language-servers = ["sourcekit-lsp", "typos"]
 
 [[language]]
 name = "python"
-language-servers = ["ruff", "pylsp"]
+language-servers = ["ruff", "pylsp", "typos"]
 formatter = { command = "ruff", args = ["format", "-"] }
 auto-format = true
 
 [[language]]
 name = "java"
-language-servers = ["jdtls"]
+language-servers = ["jdtls", "typos"]
 auto-format = true
 
 [[language]]
 name = "javascript"
-language-servers = ["typescript-language-server"]
+language-servers = ["typescript-language-server", "typos"]
 formatter = { command = "prettier", args = ["--parser", "babel"] }
 auto-format = true
 
 [[language]]
 name = "typescript"
-language-servers = ["typescript-language-server"]
+language-servers = ["typescript-language-server", "typos"]
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
 auto-format = true
 
@@ -36,11 +37,11 @@ auto-format = true
 name = "markdown"
 formatter = { command = "prettier", args = ["--parser", "markdown"] }
 auto-format = true
-language-servers = ["marksman"]
+language-servers = ["marksman", "typos"]
 
 [[language]]
 name = "pkl"
-language-servers = ["pkl-lsp"]
+language-servers = ["pkl-lsp", "typos"]
 auto-format = true
 
 [language-server.pkl-lsp]
@@ -54,6 +55,11 @@ config = { completion = { useCallbacks = true }, index-store-path = ".build/debu
 [language-server.ruff]
 command = "ruff"
 args = ["server"]
+
+[language-server.pylsp.config.pylsp.plugins]
+pyflakes.enabled = false
+pycodestyle.enabled = false
+mccabe.enabled = false
 
 [language-server.jdtls]
 command = "jdtls"

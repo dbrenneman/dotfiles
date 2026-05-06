@@ -6,7 +6,7 @@ rulers = [120]
 mouse = true
 shell = ["zsh", "-c"]
 auto-completion = true
-completion-replace = true
+completion-replace = false
 trim-trailing-whitespace = true
 end-of-line-diagnostics = "hint"
 color-modes = true
@@ -33,21 +33,27 @@ display-signature-help-docs	= true
 [editor.file-picker]
 hidden = false
 
-[editor.whitespace]
-render = "all"
+[editor.whitespace.render]
+space = "none"
+tab = "all"
+nbsp = "all"
+newline = "none"
 
 [keys.normal]
 # Use system clipboard
 y = "yank_main_selection_to_clipboard"
 p = "paste_clipboard_before"
+P = "paste_clipboard_after"
+d = ["yank_main_selection_to_clipboard", "delete_selection"]
 
 [editor.soft-wrap]
-enable = false
+enable = true
+wrap-at-text-width = false
 
 [editor.auto-save]
 focus-lost  = true
 after-delay.enable = true
-after-delay.timeout = 300000
+after-delay.timeout = 60000
 
 [editor.statusline]
 left = [
