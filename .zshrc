@@ -33,12 +33,16 @@ if [[ -n "$HOMEBREW_PREFIX" ]]; then
 fi
 autoload -Uz compinit && compinit
 
-# History
-HISTSIZE=1000000000
+# History (minimal fallback; atuin is primary)
+HISTSIZE=10000
 HISTFILE=~/.zsh_history
-SAVEHIST=1000000000
+SAVEHIST=10000
 HISTDUP=erase
-setopt appendhistory sharehistory incappendhistory extendedhistory
+setopt appendhistory incappendhistory extendedhistory
+
+# Shell options
+setopt auto_cd
+setopt correct
 
 # Java (macOS)
 if [[ -x /usr/libexec/java_home ]]; then
@@ -51,34 +55,11 @@ fi
 [[ -n "$HOMEBREW_PREFIX" && -d "${HOMEBREW_PREFIX}/opt/gnu-tar/libexec/gnubin" ]] && export PATH="${HOMEBREW_PREFIX}/opt/gnu-tar/libexec/gnubin:$PATH"
 [[ :$PATH: == *:$HOME/bin:* ]] || PATH="$HOME/bin:$PATH"
 
-# qq debug log viewer (Go's q package)
-qq() {
-    clear
-    logpath="$TMPDIR/q"
-    if [[ -z "$TMPDIR" ]]; then
-        logpath="/tmp/q"
-    fi
-    if [[ ! -f "$logpath" ]]; then
-        echo 'Q LOG' > "$logpath"
-    fi
-    tail -100f -- "$logpath"
-}
-
-rmqq() {
-    logpath="$TMPDIR/q"
-    if [[ -z "$TMPDIR" ]]; then
-        logpath="/tmp/q"
-    fi
-    if [[ -f "$logpath" ]]; then
-        rm "$logpath"
-    fi
-    qq
-}
-
 # Modern aliases
 alias ls="eza"
 alias ll="eza -la --git --icons"
 alias tree="eza --tree"
+alias cat="bat"
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 # Machine-specific overrides (not tracked in dotfiles repo)
