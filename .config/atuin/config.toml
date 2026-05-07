@@ -9,7 +9,7 @@ search_mode = "fuzzy"
 # Workspace filtering — show commands from this git repo by default
 workspaces = true
 filter_mode = "global"
-filter_mode_shell_up_key_binding = "workspace"
+filter_mode_shell_up_key_binding = "session"
 
 # Up-arrow shows repo-scoped history, Ctrl-R shows global
 search_mode_shell_up_key_binding = "fuzzy"
