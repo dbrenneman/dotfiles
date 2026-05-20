@@ -1,3 +1,4 @@
+command_timeout = 200
 palette = "catppuccin_macchiato"
 
 [directory]
@@ -11,24 +12,25 @@ style = "bold mauve"
 style = "bold red"
 
 [golang]
-style = "bold teal"
+disabled = true
 
 [python]
+detect_files = []
+detect_extensions = []
+format = '[$virtualenv]($style) '
 style = "bold yellow"
 
 [java]
-style = "bold peach"
+disabled = true
 
 [nodejs]
-style = "bold green"
+disabled = true
 
 [swift]
-style = "bold maroon"
+disabled = true
 
 [kubernetes]
-disabled = false
-style = "bold blue"
-format = '[$symbol$context( \($namespace\))]($style) '
+disabled = true
 
 [cmd_duration]
 min_time = 2_000

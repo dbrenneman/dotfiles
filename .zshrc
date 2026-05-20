@@ -24,14 +24,18 @@ source <(fzf --zsh)
 # Shell integrations
 eval "$(atuin init zsh)"
 eval "$(zoxide init zsh)"
-eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
 
-# Completions
+# Completions (cached; regenerates daily)
 if [[ -n "$HOMEBREW_PREFIX" ]]; then
   FPATH="${HOMEBREW_PREFIX}/share/zsh-completions:$FPATH"
 fi
-autoload -Uz compinit && compinit
+autoload -Uz compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 
 # History (minimal fallback; atuin is primary)
 HISTSIZE=10000
@@ -68,3 +72,4 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 # Zsh plugins (must be sourced last)
 [[ -n "$HOMEBREW_PREFIX" ]] && source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/dev/null
 [[ -n "$HOMEBREW_PREFIX" ]] && source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2>/dev/null
+[[ -f /Users/dbrenneman/.zshrc.devicecompute ]] && source /Users/dbrenneman/.zshrc.devicecompute || true
