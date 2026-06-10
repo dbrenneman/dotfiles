@@ -73,3 +73,7 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 [[ -n "$HOMEBREW_PREFIX" ]] && source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/dev/null
 [[ -n "$HOMEBREW_PREFIX" ]] && source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2>/dev/null
 [[ -f /Users/dbrenneman/.zshrc.devicecompute ]] && source /Users/dbrenneman/.zshrc.devicecompute || true
+source <(capri --zsh-completions 2>/dev/null)
+
+# Daily notes (dn / jot / eod)
+[ -f ~/.config/zsh/daily-notes.zsh ] && source ~/.config/zsh/daily-notes.zsh
