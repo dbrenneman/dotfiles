@@ -4,6 +4,7 @@
 #   jot -t <text>  append an unchecked todo instead
 #   eod            append an end-of-day summary (commits + shell history), then open
 #   todo <text>    capture a standalone todo to the vault inbox (surfaces in todo.md)
+#   todo           list open todos across the vault (terminal view of todo.md)
 # Note: `jot` shadows the BSD /usr/bin/jot utility; use `command jot` for the original.
 : ${KNOWLEDGE:=$HOME/knowledge}
 
@@ -67,10 +68,21 @@ eod() {
 # integrates with the global list without editing the (query-only) dashboard.
 todo() {
   emulate -L zsh
+  setopt local_options null_glob
   local inbox="$KNOWLEDGE/inbox.md"
   if (( $# == 0 )); then
-    print -u2 -- "usage: todo <text>"
-    return 2
+    # No args: list open todos across the vault in the terminal, since
+    # todo.md's Tasks queries only render in Obsidian. Two groups, mirroring
+    # the dashboard; templates excluded.
+    local fmt="s#^${KNOWLEDGE}/##; s#:[[:space:]]*- \[ \] #: #; s/^/  /"
+    print -- "daily notes:"
+    grep -rE '^[[:space:]]*- \[ \] .+' "$KNOWLEDGE/daily" --include='*.md' 2>/dev/null \
+      | sort -r | sed -E "$fmt"
+    print -- ""
+    print -- "elsewhere:"
+    grep -rE '^[[:space:]]*- \[ \] .+' "$KNOWLEDGE" --include='*.md' 2>/dev/null \
+      | grep -vE "^${KNOWLEDGE}/(daily|templates)/" | sed -E "$fmt"
+    return
   fi
   if [[ ! -e $inbox ]]; then
     printf -- '---\ntitle: Inbox\ntags: [inbox]\n---\n# Inbox\n\nStandalone todos captured from the shell. Open items show in [[todo]].\n\n' > "$inbox"
