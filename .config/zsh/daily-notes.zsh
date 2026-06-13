@@ -3,6 +3,7 @@
 #   jot <text>     append a timestamped bullet to today's note
 #   jot -t <text>  append an unchecked todo instead
 #   eod            append an end-of-day summary (commits + shell history), then open
+#   todo <text>    capture a standalone todo to the vault inbox (surfaces in todo.md)
 # Note: `jot` shadows the BSD /usr/bin/jot utility; use `command jot` for the original.
 : ${KNOWLEDGE:=$HOME/knowledge}
 
@@ -59,4 +60,20 @@ eod() {
     atuin search --after "$today 00:00:00" --cmd-only 2>/dev/null | awk 'NF && !seen[$0]++' | head -50 | sed 's/^/- /'
   } >> "$f"
   ${EDITOR:-hx} "$f"
+}
+
+# Capture a standalone (non-daily) todo to the vault inbox. The Tasks plugin's
+# "Open — everywhere else" query in todo.md surfaces it automatically, so this
+# integrates with the global list without editing the (query-only) dashboard.
+todo() {
+  emulate -L zsh
+  local inbox="$KNOWLEDGE/inbox.md"
+  if (( $# == 0 )); then
+    print -u2 -- "usage: todo <text>"
+    return 2
+  fi
+  if [[ ! -e $inbox ]]; then
+    printf -- '---\ntitle: Inbox\ntags: [inbox]\n---\n# Inbox\n\nStandalone todos captured from the shell. Open items show in [[todo]].\n\n' > "$inbox"
+  fi
+  print -r -- "- [ ] $*" >> "$inbox"
 }
