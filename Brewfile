@@ -47,3 +47,6 @@ cask "font-jetbrains-mono"
 cask "font-fira-code"
 cask "font-cascadia-code"
 cask "font-monaspace"
+
+# Productivity
+cask "obsidian"
