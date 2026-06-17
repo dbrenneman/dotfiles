@@ -9,11 +9,14 @@ echo "Configuring macOS defaults..."
 # Keyboard
 # ============================================================================
 
+# Disable the accent menu.
+defaults write -g ApplePressAndHoldEnabled -bool false
+
 # Fast key repeat rate (lower = faster, 2 is the fastest via UI, 1 is faster)
-defaults write NSGlobalDomain KeyRepeat -int 2
+defaults write NSGlobalDomain KeyRepeat -int 1
 
 # Short delay before key repeat starts (lower = shorter, 15 is shortest via UI)
-defaults write NSGlobalDomain InitialKeyRepeat -int 15
+defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 # Disable press-and-hold for accents in favor of key repeat
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
