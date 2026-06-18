@@ -79,9 +79,8 @@ todo() {
     grep -rE '^[[:space:]]*- \[ \] .+' "$KNOWLEDGE/daily" --include='*.md' 2>/dev/null \
       | sort -r | sed -E "$fmt"
     print -- ""
-    print -- "elsewhere:"
-    grep -rE '^[[:space:]]*- \[ \] .+' "$KNOWLEDGE" --include='*.md' 2>/dev/null \
-      | grep -vE "^${KNOWLEDGE}/(daily|templates)/" | sed -E "$fmt"
+    print -- "inbox:"
+    grep -E '^[[:space:]]*- \[ \] .+' "$inbox" 2>/dev/null | sed -E "s#[[:space:]]*- \[ \] #  #"
     return
   fi
   if [[ ! -e $inbox ]]; then
