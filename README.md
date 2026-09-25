@@ -66,6 +66,7 @@ These files are NOT tracked in this repo. Create them locally as needed:
 | `.gitconfig` | Git aliases, delta pager, Catppuccin theme, auto-setup remote |
 | `.config/helix/` | Editor config, language servers, snippets (Go, Swift, Python, TS, PKL, Java) |
 | `.config/lazygit/config.yml` | Lazygit with Catppuccin Macchiato theme |
+| `.config/hunk/config.toml` | Hunk diff reviewer: Catppuccin Macchiato, wrapped lines, agent notes shown |
 | `.config/starship.toml` | Prompt: Catppuccin Macchiato, language versions, k8s context |
 | `.config/ghostty/config` | Terminal: Catppuccin Mocha, Monaspace Neon, transparency |
 | `.config/bat/config` | Catppuccin syntax highlighting theme |

@@ -1,0 +1,3 @@
+theme = "catppuccin-macchiato"
+wrap_lines = true
+agent_notes = true

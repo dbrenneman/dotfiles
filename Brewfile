@@ -16,6 +16,7 @@ brew "helix"
 # Git
 brew "git"
 brew "git-delta"
+brew "hunk"
 brew "git-lfs"
 brew "lazygit"
 
