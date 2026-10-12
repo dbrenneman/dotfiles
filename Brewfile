@@ -42,6 +42,8 @@ brew "marksman"
 brew "typos-lsp"
 brew "jdtls"
 brew "swift-format"
+brew "bash-language-server"
+brew "shellcheck"
 
 # Fonts (programming fonts with ligatures)
 cask "font-jetbrains-mono"
