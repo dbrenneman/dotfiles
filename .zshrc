@@ -5,6 +5,10 @@ export LANG="en_US.UTF-8"
 CASE_SENSITIVE="true"
 export EDITOR="hx"
 
+# MOTD: rainbow Apple logo (static file, no subprocess). Interactive terminal only.
+[[ -o interactive && -t 1 && -z "$CLAUDECODE" && $SHLVL -le 1 && -r ~/.config/motd/apple.ansi ]] \
+  && print -r -- "$(<~/.config/motd/apple.ansi)"
+
 # Homebrew
 if [[ -f /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
