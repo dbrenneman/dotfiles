@@ -34,17 +34,13 @@ dotfiles config --local status.showUntrackedFiles no
 # 6. Install all dependencies
 brew bundle --file=~/Brewfile
 
-# 7. Install tmux plugin manager and plugins
-git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-# After starting tmux, press Ctrl-T then I to install plugins
-
-# 8. Configure macOS defaults (keyboard, dock, finder, etc.)
+# 7. Configure macOS defaults (keyboard, dock, finder, etc.)
 ./setup-macos.sh
 
-# 9. Import existing shell history into atuin
+# 8. Import existing shell history into atuin
 atuin import zsh
 
-# 10. Restart shell
+# 9. Restart shell
 exec zsh
 ```
 
@@ -52,26 +48,29 @@ exec zsh
 
 These files are NOT tracked in this repo. Create them locally as needed:
 
-**`~/.zshrc.local`** — Machine-specific shell config (env vars, aliases, tool completions). Sourced at the end of `.zshrc`.
+**`~/.zshrc.local`**: machine-specific shell config (env vars, aliases, tool completions). Sourced near the end of `.zshrc`.
 
-**`~/.gitconfig.local`** — Machine-specific git config (work email, signing keys, URL rewrites). Included via `[include]` in `.gitconfig`.
+**`~/.zshenv.local`**: machine-specific PATH entries. Sourced by `.zshenv`, so every zsh reads it, including `ssh host cmd`.
+
+**`~/.gitconfig.local`**: machine-specific git config (work email, signing keys, URL rewrites). Included via `[include]` in `.gitconfig`.
 
 ## What's Included
 
 | Path | Purpose |
 |------|---------|
-| `Brewfile` | Declarative package manifest — `brew bundle` installs everything |
+| `Brewfile` | Declarative package manifest: `brew bundle` installs everything |
 | `setup-macos.sh` | macOS defaults: fast key repeat, auto-hide dock, Finder tweaks |
-| `.zshrc` | Shell config: fzf, atuin, zoxide, direnv, starship, eza aliases |
+| `.zshenv` | PATH (Homebrew, `~/.local/bin`) for every zsh, including non-interactive ssh commands |
+| `.zshrc` | Shell config: fzf, atuin, zoxide, starship, eza aliases; tool init output cached in `~/.cache/zsh` |
 | `.gitconfig` | Git aliases, delta pager, Catppuccin theme, auto-setup remote |
 | `.config/helix/` | Editor config, language servers, snippets (Go, Swift, Python, TS, PKL, Java) |
 | `.config/lazygit/config.yml` | Lazygit with Catppuccin Macchiato theme |
 | `.config/hunk/config.toml` | Hunk diff reviewer: Catppuccin Macchiato, wrapped lines, agent notes shown |
-| `.config/starship.toml` | Prompt: Catppuccin Macchiato, language versions, k8s context |
-| `.config/ghostty/config` | Terminal: Catppuccin Mocha, Monaspace Neon, transparency |
+| `.config/starship.toml` | Prompt: Catppuccin Macchiato, git status, command duration; language modules off |
+| `.config/ghostty/config` | Terminal: Catppuccin Macchiato, JetBrains Mono, blur, quick terminal, command-finished notifications |
 | `.config/bat/config` | Catppuccin syntax highlighting theme |
 | `.config/atuin/` | Shell history config and Catppuccin theme |
-| `.config/tmux/tmux.conf` | Tmux: Ctrl-T prefix, catppuccin, vim-style panes |
+| `.config/tmux/tmux.conf` | Tmux: Ctrl-T prefix, native Macchiato theme, no plugins, tool popups |
 | `.config/git/ignore` | Global gitignore patterns |
 
 ## Managing Dotfiles

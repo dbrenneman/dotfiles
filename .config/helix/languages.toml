@@ -74,7 +74,6 @@ environment = { "RUST_LOG" = "error" }
 config.diagnosticSeverity = "Warning"
 
 [language-server.gopls.config]
-gofumpt = true
 staticcheck = true
 semanticTokens = true
 verboseOutput = true

@@ -16,7 +16,7 @@
   c = clone --recursive
   ca = !git add . && git add -u && git commit -a
   go = checkout -B
-  undopush = push -f origin HEAD^:main
+  dft = difftool
 
 [apply]
   whitespace = fix
@@ -36,18 +36,36 @@
   syntax-theme = Catppuccin Macchiato
 
 [merge]
-  conflictstyle = diff3
+  conflictstyle = zdiff3
   log = true
 
 [diff]
   colorMoved = default
+  algorithm = histogram
+  tool = difftastic
 
-[color]
-  ui = auto
-  diff = auto
-  status = auto
-  branch = auto
-  interactive = auto
+[difftool]
+  prompt = false
+
+[difftool "difftastic"]
+  cmd = difft "$LOCAL" "$REMOTE"
+
+[pull]
+  rebase = true
+
+[rebase]
+  autoSquash = true
+  autoStash = true
+  updateRefs = true
+
+[rerere]
+  enabled = true
+
+[fetch]
+  prune = true
+
+[branch]
+  sort = -committerdate
 
 [branch "main"]
   remote = origin
@@ -55,18 +73,10 @@
 
 [url "git@github.com:"]
   insteadOf = "gh:"
-  pushInsteadOf = "github:"
-  pushInsteadOf = "git://github.com/"
-
-[url "git://github.com/"]
   insteadOf = "github:"
 
 [url "git@gist.github.com:"]
   insteadOf = "gst:"
-  pushInsteadOf = "gist:"
-  pushInsteadOf = "git://gist.github.com/"
-
-[url "git://gist.github.com/"]
   insteadOf = "gist:"
 
 [push]

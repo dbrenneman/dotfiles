@@ -5,7 +5,7 @@ font-feature = "liga"
 font-feature = "zero"
 theme = "Catppuccin Macchiato"
 background-opacity = 0.92
-term = "xterm-ghostty"
+background-blur = true
 macos-titlebar-style = "transparent"
 macos-option-as-alt = true
 cursor-style = "bar"
@@ -14,3 +14,10 @@ copy-on-select = clipboard
 mouse-hide-while-typing = true
 window-padding-x = 4
 window-padding-y = 4
+
+# Desktop notification when a command of 5s or more finishes while the window is not focused
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = no-bell,notify
+
+# Drop-down terminal from anywhere (macOS asks for Accessibility permission on first use)
+keybind = global:super+grave_accent=toggle_quick_terminal
