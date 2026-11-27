@@ -1,3 +1,6 @@
+# Third-party taps
+tap "withered-magic/brew"   # starpls, the Starlark (Bazel) language server
+
 # Terminal
 cask "ghostty"
 
@@ -57,6 +60,7 @@ brew "yaml-language-server"
 brew "vscode-langservers-extracted"
 brew "taplo"
 brew "delve"
+brew "withered-magic/brew/starpls"
 
 # Fonts (programming fonts with ligatures)
 cask "font-jetbrains-mono"
